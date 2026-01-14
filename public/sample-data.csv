@@ -1,0 +1,14 @@
+字段名,中文含义,备注
+user_id,用户标识,主键
+username,用户名,登录名
+email,电子邮箱,联系方式
+phone,手机号码,联系方式
+real_name,真实姓名,身份信息
+id_card,身份证号,身份信息
+address,家庭地址,地址信息
+birthday,出生日期,个人信息
+gender,性别,个人信息
+salary,薪资,财务信息
+bank_account,银行账号,财务信息
+credit_score,信用评分,信用信息
+
