@@ -18,7 +18,13 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Plus, DatabaseIcon, SettingsIcon, Shredder } from 'lucide-react';
+import {
+  Plus,
+  DatabaseIcon,
+  SettingsIcon,
+  Shredder,
+  Shield,
+} from 'lucide-react';
 
 export default function RootLayout({
   children,
@@ -73,12 +79,13 @@ export default function RootLayout({
             {/* 左侧菜单栏 */}
             <Sidebar collapsible="icon" className="">
               <SidebarHeader className="">
-                <div className="flex h-12 items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-sm flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-sm">AI</span>
+                <div className="flex h-12 items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
+                  <div className="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0">
+                    {/* <span className="text-white font-bold text-sm">D</span> */}
+                    <Shield />
                   </div>
                   <h1 className="text-lg font-semibold group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden text-ellipsis">
-                    UPA智能数据治理系统
+                    数据治理分类平台
                   </h1>
                 </div>
               </SidebarHeader>
@@ -112,15 +119,18 @@ export default function RootLayout({
 
             {/* 主内容区域 */}
             <SidebarInset className="flex flex-col">
-              {/* 折叠按钮 */}
-              <div className="absolute top-4 left-4 z-50">
-                <SidebarTrigger className="" onClick={() => {}} />
-              </div>
+              <main>
+                <header>
+                  <div className="absolute top-4 left-4 z-50">
+                    <SidebarTrigger />
+                  </div>
+                </header>
 
-              {/* 路由内容 */}
-              <div className="flex flex-1 pt-16 items-center overflow-hidden">
-                {children}
-              </div>
+                {/* 路由内容 */}
+                <div className="flex flex-1 pt-16 items-center overflow-hidden">
+                  {children}
+                </div>
+              </main>
             </SidebarInset>
           </div>
         </SidebarProvider>
