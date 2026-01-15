@@ -127,7 +127,7 @@ export default function RootLayout({
                 </header>
 
                 {/* 路由内容 */}
-                <div className="flex flex-1 pt-16 items-center overflow-hidden">
+                <div className="flex flex-1 items-center overflow-y-auto">
                   {children}
                 </div>
               </main>

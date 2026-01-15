@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useCallback } from 'react';
-import { Upload } from 'lucide-react';
+import { Paperclip, Upload } from 'lucide-react';
 
 interface FileUploadProps {
   onFileUpload: (file: File | null) => void;
@@ -125,7 +125,7 @@ export default function FileUpload({
         onClick={handleUploadClick}
         className="border border-neutral-200/70 cursor-pointer size-9 rounded-sm flex justify-center items-center duration-200 hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)] disabled:cursor-not-allowed"
       >
-        <Upload className="w-4 h-4" />
+        <Paperclip className="w-4 h-4" />
       </button>
     </>
   );

@@ -52,12 +52,15 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    }).catch(() => {
-      toast.error("复制失败，请重试");
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch(() => {
+        toast.error('复制失败，请重试');
+      });
   };
 
   const downloadAsFile = () => {
@@ -143,5 +146,3 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
 CodeBlock.displayName = 'CodeBlock';
 
 export { CodeBlock };
-
-

@@ -466,7 +466,6 @@ code {
   border-radius: 8px;
 }
 
-/* 豆包风格输入框样式 */
 .input-content-container {
   width: 100%;
   position: relative;
@@ -761,6 +760,10 @@ code {
 /* 文件上传区域悬停状态样式 */
 .file-upload-hover {
   border-color: #9ca3af !important;
+}
+
+.normal-font-black {
+  color: rgba(0, 0, 0, 0.85);
 }
 
 @layer base {

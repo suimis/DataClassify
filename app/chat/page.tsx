@@ -1,6 +1,13 @@
 'use client';
 
-import { Send, FileText, X, ArrowUp, Loader2 } from 'lucide-react';
+import {
+  Send,
+  FileText,
+  X,
+  ArrowUp,
+  Loader2,
+  BadgeCheckIcon,
+} from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Textarea from 'react-textarea-autosize';
@@ -8,6 +15,7 @@ import FileUpload from '@/components/FileUpload';
 import { Markdown } from '@/components/Markdown';
 import CanvasBackground from '@/components/canvas-background';
 import { useChat } from '@ai-sdk/react';
+import { Badge } from '@/components/ui/badge';
 
 export default function ChatPage() {
   const { messages, sendMessage } = useChat();
@@ -24,15 +32,6 @@ export default function ChatPage() {
 
   const handleClearFile = () => {
     setUploadedFile(null);
-    // 添加清除文件消息
-    const clearMessage = {
-      id: Date.now(),
-      type: 'text',
-      content: '已清除上传的文件',
-      sender: 'user' as const,
-      timestamp: new Date(),
-    };
-    setInputText((prev) => '');
   };
 
   const handleSubmit = async (e) => {
@@ -43,8 +42,8 @@ export default function ChatPage() {
 
   return (
     <div
-      className={`flex-1 flex flex-col mb-6 ${
-        messages.length === 0 ? '' : 'h-dvh overflow-y-hidden'
+      className={`flex-1 flex flex-col ${
+        messages.length === 0 ? '' : 'h-dvh overflow-y-auto'
       }`}
     >
       {/* 在没有发生对话的时候显示Canvas背景 */}
@@ -89,18 +88,28 @@ export default function ChatPage() {
       <div
         ref={contentRef}
         className={`${
-          messages.length === 0 ? 'hidden' : 'flex-1 overflow-y-auto'
+          messages.length === 0
+            ? 'hidden'
+            : 'flex-1 mx-auto w-200 overflow-y-hidden'
         }`}
       >
         <div className="container mx-auto py-4 px-4">
           {messages.map((message) => (
-            <div key={message.id} className="ml-4">
-              {message.role === 'user' ? 'User: ' : 'AI: '}
+            <div key={message.id} className="flex ml-4 mb-4">
               {message.parts.map((part, i) => {
                 switch (part.type) {
+                  case 'reasoning':
+                    return <pre key={i}>{part.text}</pre>;
                   case 'text':
                     return (
-                      <div key={`${message.id}-${i}`}>
+                      <div
+                        key={`${message.id}-${i}`}
+                        className={`inline-block flex items-center normal-font-black py-2 px-3 ${
+                          message.role == 'user'
+                            ? 'bg-gray-100 rounded-md ml-auto'
+                            : 'mr-auto'
+                        }`}
+                      >
                         <Markdown>{part.text}</Markdown>
                       </div>
                     );
@@ -114,8 +123,8 @@ export default function ChatPage() {
       {/* 底部输入区域 */}
       <section
         ref={inputRef}
-        className={`w-full flex justify-center pb-4 mb-4 pt-4 z-100 ${
-          messages.length === 0 ? 'mt-auto' : 'bg-background mt-auto'
+        className={`w-full flex justify-center pb-4 mb-4 z-100 ${
+          messages.length === 0 ? 'mt-auto pt-75' : 'bg-background'
         }`}
       >
         <div className="flex bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">

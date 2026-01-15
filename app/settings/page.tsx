@@ -250,7 +250,7 @@ export default function SettingsPage() {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleAIConfigChange('apiKey', e.target.value)
                     }
-                    placeholder="输入您的API密钥"
+                    placeholder="请输入你的API迷药"
                   />
                 </div>
 
