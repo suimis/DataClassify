@@ -766,6 +766,18 @@ code {
   color: rgba(0, 0, 0, 0.85);
 }
 
+.scrollbar-nice {
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: #e5e5e5;
+  --scrollbar-thumb-radius: 9999px;
+  --scrollbar-thumb-hover: #d4d4d4;
+}
+.scrollbar-nice {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, initial)
+    var(--scrollbar-track, initial);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
