@@ -1,8 +1,11 @@
 import { Markdown } from './Markdown';
 
-export default function Message({ message }) {
+export default function Message({ message, status }) {
   return (
     <div key={message.id} className="flex flex-col ml-4 mb-4">
+      {status == 'streaming' && message.role == 'assistant' && (
+        <span>loading</span>
+      )}
       {message.parts.map((part, i) => {
         switch (part.type) {
           case 'reasoning':
@@ -11,7 +14,7 @@ export default function Message({ message }) {
             return (
               <div
                 key={`${message.id}-${i}`}
-                className={`inline-block flex items-center normal-font-black py-0.5 px-3 ${
+                className={`inline-block flex items-center normal-font-black py-2 px-3 ${
                   message.role == 'user'
                     ? 'bg-gray-100 rounded-md ml-auto'
                     : 'mr-auto'
@@ -22,6 +25,7 @@ export default function Message({ message }) {
             );
         }
       })}
+
       {message.role == 'user' ? (
         <div className="ml-auto"></div>
       ) : (

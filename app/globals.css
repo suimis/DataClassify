@@ -778,6 +778,10 @@ code {
     var(--scrollbar-track, initial);
 }
 
+.normal-table-border {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

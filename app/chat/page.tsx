@@ -1,17 +1,25 @@
 'use client';
 
-import { FileText, X, ArrowUp, Loader2 } from 'lucide-react';
+import { FileText, X, ArrowUp, Loader2, Square } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Textarea from 'react-textarea-autosize';
 import FileUpload from '@/components/FileUpload';
-import { Markdown } from '@/components/Markdown';
 import CanvasBackground from '@/components/canvas-background';
 import { useChat } from '@ai-sdk/react';
 import Message from '@/components/message';
 
 export default function ChatPage() {
-  const { messages, sendMessage, status } = useChat();
+  const {
+    id,
+    messages,
+    sendMessage,
+    status,
+    stop,
+    resumeStream,
+    regenerate,
+    clearError,
+  } = useChat();
   const [inputText, setInputText] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +37,14 @@ export default function ChatPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    sendMessage({ text: inputText });
-    setInputText('');
+    if (status == 'ready' || status == 'error') {
+      sendMessage({ text: inputText });
+      setInputText('');
+    }
+
+    if (status == 'streaming' || status == 'submitted') {
+      stop();
+    }
   };
 
   useEffect(() => {
@@ -95,7 +109,7 @@ export default function ChatPage() {
         >
           <div className="container mx-auto py-4 px-4">
             {messages.map((message, i) => (
-              <Message key={i} message={message} />
+              <Message key={i} message={message} status={status} />
             ))}
           </div>
         </div>
@@ -151,16 +165,15 @@ export default function ChatPage() {
             <button
               onClick={handleSubmit}
               className={`absolute bottom-3 right-3 size-8 flex justify-center items-center transition-all duration-200 rounded-full ${
-                inputText.trim() && !isLoading
+                inputText.trim()
                   ? 'bg-blue-500 cursor-pointer hover:bg-blue-600'
-                  : 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-gray-300 '
               }`}
-              disabled={!inputText.trim() || isLoading}
             >
               {isLoading ? (
-                <Loader2
+                <Square
                   size={18}
-                  className="text-white font-semibold animate-spin"
+                  className="cursor-pointer text-white font-semibold hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)]"
                 />
               ) : (
                 <ArrowUp size={18} className={`text-white font-semibold`} />

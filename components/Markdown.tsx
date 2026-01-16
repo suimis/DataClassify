@@ -29,7 +29,7 @@ const components: Partial<Components> = {
   },
   hr: () => <hr className="my-4" />,
   p: ({ children, ...props }) => (
-    <p className="leading-6 my-2" {...props}>
+    <p className="leading-6" {...props}>
       {children}
     </p>
   ),
@@ -127,6 +127,9 @@ const components: Partial<Components> = {
         {children}
       </h6>
     );
+  },
+  table: ({ children, ...props }) => {
+    return <table className="border normal-table-border">{children}</table>;
   },
 };
 
