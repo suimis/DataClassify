@@ -106,7 +106,7 @@ export default function ChatPage() {
           messages.length === 0 ? 'pt-75' : 'mt-auto bg-background'
         }`}
       >
-        <div className="relative  flex flex-col bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
+        <div className="relative flex flex-col bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
           <Textarea
             placeholder="发消息，开始你的数据治理之路..."
             rows={2}

@@ -123,7 +123,7 @@ export default function FileUpload({
       <button
         type="button"
         onClick={handleUploadClick}
-        className="border border-neutral-200/70 cursor-pointer size-9 rounded-sm flex justify-center items-center duration-200 hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)] disabled:cursor-not-allowed"
+        className=" cursor-pointer size-9 rounded-full flex justify-center items-center duration-200 hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)] disabled:cursor-not-allowed"
       >
         <Paperclip className="w-4 h-4" />
       </button>

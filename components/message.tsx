@@ -11,7 +11,7 @@ export default function Message({ message }) {
             return (
               <div
                 key={`${message.id}-${i}`}
-                className={`inline-block flex items-center normal-font-black py-2 px-3 ${
+                className={`inline-block flex items-center normal-font-black py-0.5 px-3 ${
                   message.role == 'user'
                     ? 'bg-gray-100 rounded-md ml-auto'
                     : 'mr-auto'
