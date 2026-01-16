@@ -42,6 +42,8 @@
     "@radix-ui/react-tooltip": "^1.2.6",
     "@tailwindcss/vite": "^4.1.7",
     "@tanstack/react-table": "^8.21.3",
+    "@univerjs/preset-sheets-core": "^0.15.1",
+    "@univerjs/presets": "^0.15.1",
     "ai": "^6.0.33",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

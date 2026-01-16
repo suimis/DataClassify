@@ -8,9 +8,10 @@ import FileUpload from '@/components/FileUpload';
 import { Markdown } from '@/components/Markdown';
 import CanvasBackground from '@/components/canvas-background';
 import { useChat } from '@ai-sdk/react';
+import Message from '@/components/message';
 
 export default function ChatPage() {
-  const { messages, sendMessage } = useChat();
+  const { messages, sendMessage, status } = useChat();
   const [inputText, setInputText] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +32,16 @@ export default function ChatPage() {
     sendMessage({ text: inputText });
     setInputText('');
   };
+
+  useEffect(() => {
+    if (status == 'ready' || status == 'error') {
+      setIsLoading(false);
+    }
+
+    if (status == 'submitted' || status == 'streaming') {
+      setIsLoading(true);
+    }
+  }, [status]);
 
   return (
     <div className="flex flex-col w-full scrollbar-nice">
@@ -83,28 +94,8 @@ export default function ChatPage() {
           className={`${messages.length === 0 ? 'hidden' : 'mx-auto w-200'}`}
         >
           <div className="container mx-auto py-4 px-4">
-            {messages.map((message) => (
-              <div key={message.id} className="flex ml-4 mb-4">
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case 'reasoning':
-                      return <pre key={i}>{part.text}</pre>;
-                    case 'text':
-                      return (
-                        <div
-                          key={`${message.id}-${i}`}
-                          className={`inline-block flex items-center normal-font-black py-2 px-3 ${
-                            message.role == 'user'
-                              ? 'bg-gray-100 rounded-md ml-auto'
-                              : 'mr-auto'
-                          }`}
-                        >
-                          <Markdown>{part.text}</Markdown>
-                        </div>
-                      );
-                  }
-                })}
-              </div>
+            {messages.map((message, i) => (
+              <Message key={i} message={message} />
             ))}
           </div>
         </div>
@@ -115,7 +106,7 @@ export default function ChatPage() {
           messages.length === 0 ? 'pt-75' : 'mt-auto bg-background'
         }`}
       >
-        <div className="relative flex flex-col bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
+        <div className="relative  flex flex-col bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
           <Textarea
             placeholder="发消息，开始你的数据治理之路..."
             rows={2}

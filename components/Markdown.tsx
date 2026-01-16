@@ -27,7 +27,12 @@ const components: Partial<Components> = {
       );
     }
   },
-  hr: () => <hr className="mt-4" />,
+  hr: () => <hr className="my-4" />,
+  p: ({ children, ...props }) => (
+    <p className="leading-6 my-2" {...props}>
+      {children}
+    </p>
+  ),
   pre: ({ children }) => <>{children}</>,
   ol: ({ children, ...props }) => {
     return (
@@ -38,7 +43,7 @@ const components: Partial<Components> = {
   },
   li: ({ children, ...props }) => {
     return (
-      <li className="my-1 marker:prose-bullets" {...props}>
+      <li className="my-2 marker:prose-bullets" {...props}>
         {children}
       </li>
     );
@@ -90,7 +95,7 @@ const components: Partial<Components> = {
   },
   h2: ({ children, ...props }) => {
     return (
-      <h2 className="text-2xl font-semibold mt-4 mb-2" {...props}>
+      <h2 className="text-2xl font-semibold mt-3.5 mb-3" {...props}>
         {children}
       </h2>
     );

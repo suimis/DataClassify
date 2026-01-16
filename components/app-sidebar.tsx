@@ -1,8 +1,7 @@
 'use client';
 import {
   DatabaseZap,
-  Home,
-  Layers2,
+  MessageCircle,
   Settings,
   Shapes,
   Usb,
@@ -27,7 +26,7 @@ const items = [
   {
     title: '对话',
     url: '/chat',
-    icon: Home,
+    icon: MessageCircle,
   },
 
   {
