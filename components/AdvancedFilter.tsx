@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface ClassificationResult {
+  dataSource: string;
+  databaseName: string;
   tableName: string;
   field: string;
   fieldDescription: string;
@@ -51,6 +53,8 @@ interface AdvancedFilterProps {
 }
 
 const fieldOptions = [
+  { value: 'dataSource', label: '数据源', type: 'select' },
+  { value: 'databaseName', label: '库名', type: 'text' },
   { value: 'tableName', label: '表名', type: 'text' },
   { value: 'field', label: '字段', type: 'text' },
   { value: 'fieldDescription', label: '字段描述', type: 'text' },
@@ -92,8 +96,8 @@ export default function AdvancedFilter({
           ...new Set(
             data.map(
               (item) =>
-                item[field.value as keyof ClassificationResult] as string
-            )
+                item[field.value as keyof ClassificationResult] as string,
+            ),
           ),
         ];
         options[field.value] = values;
@@ -126,8 +130,8 @@ export default function AdvancedFilter({
   const updateFilter = (id: string, updates: Partial<FilterCondition>) => {
     setFilters(
       filters.map((filter) =>
-        filter.id === id ? { ...filter, ...updates } : filter
-      )
+        filter.id === id ? { ...filter, ...updates } : filter,
+      ),
     );
   };
 
@@ -148,50 +152,102 @@ export default function AdvancedFilter({
     }
 
     try {
+      // 验证所有正则表达式
+      const regexErrors: string[] = [];
+      pendingFilters.forEach((filter) => {
+        if (filter.operator === 'regex') {
+          try {
+            const regexValue =
+              typeof filter.value === 'string' ? filter.value : '';
+            if (regexValue) {
+              new RegExp(regexValue, 'i');
+            }
+          } catch (e) {
+            regexErrors.push(`无效的正则表达式: ${filter.value}`);
+          }
+        }
+      });
+
+      if (regexErrors.length > 0) {
+        setRegexError(regexErrors[0]);
+        return;
+      }
+
       const filteredData = data.filter((item) => {
-        return pendingFilters.every((filter) => {
+        // 处理逻辑运算符
+        let result = true;
+        for (let i = 0; i < pendingFilters.length; i++) {
+          const filter = pendingFilters[i];
           const fieldValue = item[
             filter.field as keyof ClassificationResult
           ] as string;
 
+          let match = false;
           switch (filter.operator) {
             case 'equals':
-              // 处理 equals 操作符，支持数组和字符串值
               if (Array.isArray(filter.value)) {
-                return filter.value.includes(fieldValue);
+                match =
+                  filter.value.length > 0 && filter.value.includes(fieldValue);
               } else {
-                return fieldValue === filter.value;
+                match = fieldValue === filter.value;
               }
+              break;
             case 'contains':
-              // 安全地处理 toLowerCase() 调用
               const searchValue =
                 typeof filter.value === 'string' ? filter.value : '';
-              const fieldValueLower =
-                typeof fieldValue === 'string' ? fieldValue.toLowerCase() : '';
-              return fieldValueLower.includes(searchValue.toLowerCase());
+              // 如果搜索值为空，则匹配所有
+              if (!searchValue) {
+                match = true;
+              } else {
+                const fieldValueLower =
+                  typeof fieldValue === 'string'
+                    ? fieldValue.toLowerCase()
+                    : '';
+                match = fieldValueLower.includes(searchValue.toLowerCase());
+              }
+              break;
             case 'in':
-              return (
-                Array.isArray(filter.value) && filter.value.includes(fieldValue)
-              );
-            case 'notIn':
-              return (
+              match =
                 Array.isArray(filter.value) &&
-                !filter.value.includes(fieldValue)
-              );
+                filter.value.length > 0 &&
+                filter.value.includes(fieldValue);
+              break;
+            case 'notIn':
+              match =
+                !Array.isArray(filter.value) ||
+                filter.value.length === 0 ||
+                !filter.value.includes(fieldValue);
+              break;
             case 'regex':
               try {
                 const regexValue =
                   typeof filter.value === 'string' ? filter.value : '';
-                const regex = new RegExp(regexValue, 'i');
-                return regex.test(fieldValue);
+                if (regexValue) {
+                  const regex = new RegExp(regexValue, 'i');
+                  match = regex.test(fieldValue);
+                } else {
+                  match = true;
+                }
               } catch (e) {
-                setRegexError(`无效的正则表达式: ${filter.value}`);
-                return false;
+                match = false;
               }
+              break;
             default:
-              return true;
+              match = true;
           }
-        });
+
+          // 应用逻辑运算符
+          if (i === 0) {
+            result = match;
+          } else {
+            if (filter.logic === 'AND') {
+              result = result && match;
+            } else {
+              result = result || match;
+            }
+          }
+        }
+        return result;
       });
 
       onFilterChange(filteredData);
@@ -213,14 +269,27 @@ export default function AdvancedFilter({
     return `${field} ${operator} "${value}"`;
   };
 
+  // Popover 关闭时重置 pendingFilters
+  const handlePopoverChange = (open: boolean) => {
+    if (!open) {
+      setPendingFilters(filters);
+      setRegexError(null);
+    }
+    setIsFilterOpen(open);
+  };
+
   return (
     <div className="w-full">
-      <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+      <Popover open={isFilterOpen} onOpenChange={handlePopoverChange}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full justify-between">
+          <Button
+            variant="outline"
+            size="default"
+            className="w-full justify-between"
+          >
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <span>高级筛选</span>
+              <span className="">高级筛选</span>
               {filters.length > 0 && (
                 <Badge variant="secondary" className="ml-2">
                   {filters.length}
@@ -249,11 +318,15 @@ export default function AdvancedFilter({
                         }
                       >
                         <SelectTrigger className="w-20 h-8">
-                          <SelectValue />
+                          <SelectValue placeholder="" />
                         </SelectTrigger>
                         <SelectContent className="z-[10000]">
-                          <SelectItem value="AND">AND</SelectItem>
-                          <SelectItem value="OR">OR</SelectItem>
+                          <SelectItem value="AND" className="">
+                            AND
+                          </SelectItem>
+                          <SelectItem value="OR" className="">
+                            OR
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -261,7 +334,7 @@ export default function AdvancedFilter({
                     {/* 字段选择 */}
                     <Select
                       value={filter.field}
-                      onValueChange={(value) =>
+                      onValueChange={(value: string) =>
                         updateFilter(filter.id, {
                           field: value,
                           operator:
@@ -278,11 +351,15 @@ export default function AdvancedFilter({
                       }
                     >
                       <SelectTrigger className="w-32 h-8">
-                        <SelectValue />
+                        <SelectValue placeholder="" />
                       </SelectTrigger>
                       <SelectContent className="z-[10000]">
                         {fieldOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className=""
+                          >
                             {option.label}
                           </SelectItem>
                         ))}
@@ -297,11 +374,15 @@ export default function AdvancedFilter({
                       }
                     >
                       <SelectTrigger className="w-24 h-8">
-                        <SelectValue />
+                        <SelectValue placeholder="" />
                       </SelectTrigger>
                       <SelectContent className="z-[10000]">
                         {operatorOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className=""
+                          >
                             {option.label}
                           </SelectItem>
                         ))}
@@ -313,9 +394,10 @@ export default function AdvancedFilter({
                       {filter.operator === 'regex' ? (
                         // 正则表达式操作符总是使用输入框
                         <Input
+                          type="text"
                           placeholder="输入正则表达式，如: ^test.*"
                           value={(filter.value as string) || ''}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             updateFilter(filter.id, { value: e.target.value })
                           }
                           className="h-8 border-blue-300 focus:border-blue-500"
@@ -327,6 +409,7 @@ export default function AdvancedFilter({
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="outline"
+                              size="default"
                               className="w-full h-8 justify-start"
                             >
                               {Array.isArray(filter.value) &&
@@ -341,17 +424,19 @@ export default function AdvancedFilter({
                                 key={option}
                                 onSelect={() => {
                                   const currentValues = Array.isArray(
-                                    filter.value
+                                    filter.value,
                                   )
                                     ? filter.value
                                     : [];
                                   const newValues = currentValues.includes(
-                                    option
+                                    option,
                                   )
                                     ? currentValues.filter((v) => v !== option)
                                     : [...currentValues, option];
                                   updateFilter(filter.id, { value: newValues });
                                 }}
+                                className=""
+                                inset={false}
                               >
                                 <div className="flex items-center gap-2">
                                   <input
@@ -372,9 +457,10 @@ export default function AdvancedFilter({
                       ) : (
                         // 文本类型的字段使用输入框
                         <Input
+                          type="text"
                           placeholder="输入值..."
                           value={(filter.value as string) || ''}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             updateFilter(filter.id, { value: e.target.value })
                           }
                           className="h-8"
@@ -414,7 +500,7 @@ export default function AdvancedFilter({
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  添加条件
+                  <span>添加条件</span>
                 </Button>
                 {filters.length > 0 && (
                   <Button
@@ -424,11 +510,16 @@ export default function AdvancedFilter({
                     className="flex items-center gap-2"
                   >
                     <RotateCcw className="h-4 w-4" />
-                    清除全部
+                    <span>清除全部</span>
                   </Button>
                 )}
               </div>
-              <Button onClick={applyFilters} size="sm">
+              <Button
+                onClick={applyFilters}
+                variant="default"
+                size="sm"
+                className=""
+              >
                 应用筛选
               </Button>
             </div>
@@ -441,45 +532,6 @@ export default function AdvancedFilter({
                 </div>
               </div>
             )}
-
-            {/* 正则表达式帮助信息 */}
-            <div className="pt-4 border-t">
-              <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                <h4 className="font-medium mb-2">正则表达式使用提示：</h4>
-                <ul className="space-y-1 text-xs">
-                  <li>
-                    • <code className="bg-gray-200 px-1 rounded">^text</code> -
-                    匹配以 "text" 开头的内容
-                  </li>
-                  <li>
-                    • <code className="bg-gray-200 px-1 rounded">text$</code> -
-                    匹配以 "text" 结尾的内容
-                  </li>
-                  <li>
-                    • <code className="bg-gray-200 px-1 rounded">.*</code> -
-                    匹配任意字符（除换行符外）零次或多次
-                  </li>
-                  <li>
-                    • <code className="bg-gray-200 px-1 rounded">.+</code> -
-                    匹配任意字符（除换行符外）一次或多次
-                  </li>
-                  <li>
-                    •{' '}
-                    <code className="bg-gray-200 px-1 rounded">
-                      (value1|value2)
-                    </code>{' '}
-                    - 匹配 value1 或 value2
-                  </li>
-                  <li>
-                    • 示例：
-                    <code className="bg-gray-200 px-1 rounded">
-                      ^user.*admin$
-                    </code>{' '}
-                    匹配以 "user" 开头且以 "admin" 结尾的内容
-                  </li>
-                </ul>
-              </div>
-            </div>
 
             {/* 当前筛选条件预览 */}
             {pendingFilters.length > 0 && (

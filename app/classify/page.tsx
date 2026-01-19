@@ -125,7 +125,7 @@ export default function ClassificationPage() {
       {
         threshold: 0.1, // 当10%的元素可见时触发
         root: contentRef.current, // 相对于内容区域观察
-      }
+      },
     );
 
     if (bottomMarkerRef.current) {
@@ -142,9 +142,10 @@ export default function ClassificationPage() {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* 页面标题 */}
-      <div className="px-6 py-4 border-b">
-        <h1 className="text-2xl font-bold text-gray-800">数据分类</h1>
-        <p className="text-gray-600 mt-1">上传文件进行智能数据分类和分析</p>
+      <div className="px-6 py-2 border-b flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800/90">数据分类分级</h1>
+        </div>
       </div>
 
       {/* 可滚动内容区域 */}

@@ -2,6 +2,8 @@
 
 import { useRef, useState, useCallback } from 'react';
 import { Paperclip, Upload } from 'lucide-react';
+import { Tooltip, TooltipTrigger } from './ui/tooltip';
+import { TooltipContent } from '@radix-ui/react-tooltip';
 
 interface FileUploadProps {
   onFileUpload: (file: File | null) => void;
@@ -120,10 +122,11 @@ export default function FileUpload({
         onChange={handleFileChange}
         className="hidden"
       />
+
       <button
         type="button"
         onClick={handleUploadClick}
-        className=" cursor-pointer size-9 rounded-full flex justify-center items-center duration-200 hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)] disabled:cursor-not-allowed"
+        className="cursor-pointer size-9 rounded-full flex justify-center items-center duration-200 hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)] disabled:cursor-not-allowed"
       >
         <Paperclip className="w-4 h-4" />
       </button>

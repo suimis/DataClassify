@@ -18,6 +18,8 @@ interface MockApiDataItem {
 }
 
 interface TransformedDataItem {
+  dataSource: string;
+  databaseName: string;
   tableName: string;
   field: string;
   fieldDescription: string;
@@ -41,112 +43,114 @@ export default function SourceDataPage() {
   // 模拟API数据
   const mockApiData: MockApiDataItem[] = [
     {
-      table_name: 'Pak Sze Yu',
-      field_name: 'Pak Sze Yu',
-      field_desc: 'mpYogWtciH',
-      level1: 'ANTQ830Dnq',
-      level2: 'avW0tiFNAp',
-      level3: 'Dt0HubxCTa',
-      level4: 'SnSEsLZQMD',
-      sensitivity_level: 'COlpXJa4nY',
+      table_name: 'daily_summary',
+      field_name: 'mchnt_cd',
+      field_desc: '商户代码',
+      level1: '业务数据',
+      level2: '基础信息',
+      level3: '单位基础信息',
+      level4: '单位入网信息',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Shimizu Yuito',
-      field_name: 'Shimizu Yuito',
-      field_desc: 'Sex34IQTTC',
-      level1: '5OEXXJjjvY',
-      level2: 'ibA6BZ7MXE',
-      level3: 'oO8Zp4Ls8r',
-      level4: 'SMwMvvpGcp',
-      sensitivity_level: 'nmoT61aZaU',
+      table_name: 'daily_summary',
+      field_name: 'mchnt_tp',
+      field_desc: '商户类型',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '商户衍生信息',
+      level4: '商户标签',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Cynthia Dixon',
-      field_name: 'Cynthia Dixon',
-      field_desc: 'DOWsF3zsZ0',
-      level1: 'YnSMmcZ2CB',
-      level2: 'KIWzc1RMG2',
-      level3: '1MvFbIDUbB',
-      level4: 'PZz6rQSAYZ',
-      sensitivity_level: '2MDdJ5PfoF',
+      table_name: 'daily_summary',
+      field_name: 'pri_acct_no_conv',
+      field_desc: '加密卡号',
+      level1: '业务数据',
+      level2: '基础信息',
+      level3: '个人基础信息',
+      level4: '个人银行卡信息',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Tao Ziyi',
-      field_name: 'Tao Ziyi',
-      field_desc: 'dH8gUKZXGU',
-      level1: 'Mm2ktufILz',
-      level2: 'VdI2r72ONj',
-      level3: '1JlUkJXJ7k',
-      level4: 'GmBbiVsdNT',
-      sensitivity_level: 'FEswNsCaSV',
+      table_name: 'daily_summary',
+      field_name: 'acpt_ins_id_cd',
+      field_desc: '受理机构标识码',
+      level1: '业务数据',
+      level2: '基础信息',
+      level3: '单位基础信息',
+      level4: '单位入网信息',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Grace Russell',
-      field_name: 'Grace Russell',
-      field_desc: 'Lk0r4K2Fz1',
-      level1: '7NJ3E74LG6',
-      level2: 'KMUoRkpLCX',
-      level3: 'nVaomTQhAb',
-      level4: 'DAQuPv4K2h',
-      sensitivity_level: 'CipxL9w4JA',
+      table_name: 'daily_summary',
+      field_name: 'acq_ins_id_cd',
+      field_desc: '收单机构标识码',
+      level1: '业务数据',
+      level2: '基础信息',
+      level3: '单位基础信息',
+      level4: '单位入网信息',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Chiba Rin',
-      field_name: 'Chiba Rin',
-      field_desc: 'mMUDD0fPeN',
-      level1: 'ZN1b8bFmx6',
-      level2: 'OeTuUhXrTE',
-      level3: 'VeXlVPe5Vs',
-      level4: 'TXpBtJ2Qgf',
-      sensitivity_level: 'MXlUraxdtS',
+      table_name: 'daily_summary',
+      field_name: 'afternoon_amt_sum',
+      field_desc: '汇总-下午交易金额(12-17点)',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '个人衍生信息',
+      level4: '个人金额笔数类',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Pan Anqi',
-      field_name: 'Pan Anqi',
-      field_desc: 'jQdknWEC1A',
-      level1: 'lG74FUSP7Y',
-      level2: 'coOSFJP712',
-      level3: 'yaImyxuEpg',
-      level4: 'TYNkiAXIXm',
-      sensitivity_level: 'lFadMFZOgZ',
+      table_name: 'daily_summary',
+      field_name: 'afternoon_cnt_sum',
+      field_desc: '汇总-下午交易笔数(12-17点)',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '个人衍生信息',
+      level4: '个人金额笔数类',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Fung Ting Fung',
-      field_name: 'Fung Ting Fung',
-      field_desc: 'GPoh8sWCEr',
-      level1: 'ANvpX2E5Ky',
-      level2: 'o66QcykqAM',
-      level3: 'E21m9ulSy5',
-      level4: '0nTq1kK8Ji',
-      sensitivity_level: 'il7ZIGpIaK',
+      table_name: 'daily_summary',
+      field_name: 'amt_max',
+      field_desc: '清算交易金额最大值',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '个人衍生信息',
+      level4: '个人金额笔数类',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Beverly Richardson',
-      field_name: 'Beverly Richardson',
-      field_desc: 'IMvkfxI61o',
-      level1: 'IWJb8FYsiY',
-      level2: 's2Vr2Koxpm',
-      level3: 'rKSjjsygKX',
-      level4: 'OoUJRPazEl',
-      sensitivity_level: '0LxtgjsLg8',
+      table_name: 'daily_summary',
+      field_name: 'amt_min',
+      field_desc: '清算交易金额最小值',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '个人衍生信息',
+      level4: '个人金额笔数类',
+      sensitivity_level: 'C',
     },
     {
-      table_name: 'Tan Jiehong',
-      field_name: 'Tan Jiehong',
-      field_desc: 'NisXPLb6NC',
-      level1: 'JOAxjnlb7T',
-      level2: '32h8MDlv3D',
-      level3: 'Vrkezq2S5N',
-      level4: '38Nr7OV9uk',
-      sensitivity_level: 'DUYOXmMee5',
+      table_name: 'daily_summary',
+      field_name: 'amt_sum',
+      field_desc: '清算交易金额求和',
+      level1: '业务数据',
+      level2: '衍生信息',
+      level3: '个人衍生信息',
+      level4: '个人金额笔数类',
+      sensitivity_level: 'C',
     },
   ];
 
   // 数据转换函数
   const transformApiData = (
-    apiData: MockApiDataItem[]
+    apiData: MockApiDataItem[],
   ): TransformedDataItem[] => {
     return apiData.map((item) => ({
+      dataSource: 'hive',
+      databaseName: 'ds_etl_prod',
       tableName: item.table_name,
       field: item.field_name,
       fieldDescription: item.field_desc,
@@ -197,27 +201,15 @@ export default function SourceDataPage() {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* 页面标题 */}
-      <div className="px-6 py-4 border-b flex items-center justify-between">
+      <div className="px-6 py-2 border-b flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">源数据</h1>
-          <p className="text-gray-600 mt-1">查看已分类的源数据信息</p>
+          <h1 className="text-xl font-bold text-gray-800/90">元数据管理</h1>
         </div>
-        {!loading && (
-          <Button
-            onClick={handleRefresh}
-            disabled={loading}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            刷新
-          </Button>
-        )}
       </div>
 
       {/* 内容区域 */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="container mx-auto py-6 flex flex-col items-center">
+      <div className="flex-1 overflow-y-auto m-2">
+        <div className="container mx-auto flex flex-col items-center">
           {/* 加载状态 */}
           {loading && !results && (
             <div className="w-full max-w-6xl flex items-center justify-center py-12">
@@ -245,6 +237,7 @@ export default function SourceDataPage() {
                   onClick={handleRefresh}
                   className="mt-4"
                   variant="outline"
+                  size="default"
                 >
                   重试
                 </Button>
@@ -253,11 +246,13 @@ export default function SourceDataPage() {
           )}
 
           {/* 结果展示区域 */}
-          {results && !loading && (
+          {results && (
             <div className="mb-6 w-full max-w-6xl">
               <ResultDisplay
                 results={results}
                 onClearResult={handleClearResults}
+                onRefresh={handleRefresh}
+                isLoading={loading}
               />
             </div>
           )}
@@ -266,8 +261,7 @@ export default function SourceDataPage() {
           {!results && !loading && !error && (
             <div className="w-full max-w-6xl flex items-center justify-center py-12">
               <div className="text-center">
-                <RefreshCw className="h-8 w-8 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600">点击刷新按钮加载源数据</p>
+                <RefreshCw className="h-8 w-8 mx-auto mb-4 rounded-full b hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)]" />
               </div>
             </div>
           )}

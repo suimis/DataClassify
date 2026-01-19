@@ -35,7 +35,7 @@ const items = [
     icon: Shapes,
   },
   {
-    title: '数据源接入',
+    title: '元数据管理',
     url: '/source-data',
     icon: Usb,
   },
@@ -90,7 +90,7 @@ export function AppSidebar() {
                         'transition-all',
                         active
                           ? '!bg-blue-600 !text-white hover:!text-white hover:!bg-blue-600 active:!bg-blue-600'
-                          : 'hover:bg-blue-100 hover:text-blue-600'
+                          : 'hover:bg-blue-100 hover:text-blue-600',
                       )}
                       isActive={active}
                       asChild

@@ -8,6 +8,11 @@ import FileUpload from '@/components/FileUpload';
 import CanvasBackground from '@/components/canvas-background';
 import { useChat } from '@ai-sdk/react';
 import Message from '@/components/message';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function ChatPage() {
   const {
@@ -54,6 +59,14 @@ export default function ChatPage() {
 
     if (status == 'submitted' || status == 'streaming') {
       setIsLoading(true);
+    }
+
+    if (status == 'submitted') {
+      // 滚动到底部
+      contentRef.current?.scrollTo({
+        top: contentRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }, [status]);
 
@@ -109,7 +122,12 @@ export default function ChatPage() {
         >
           <div className="container mx-auto py-4 px-4">
             {messages.map((message, i) => (
-              <Message key={i} message={message} status={status} />
+              <Message
+                key={i}
+                message={message}
+                status={status}
+                active={true}
+              />
             ))}
           </div>
         </div>
@@ -162,23 +180,31 @@ export default function ChatPage() {
                 <FileUpload onFileUpload={handleFileUpload} />
               )}
             </div>
-            <button
-              onClick={handleSubmit}
-              className={`absolute bottom-3 right-3 size-8 flex justify-center items-center transition-all duration-200 rounded-full ${
-                inputText.trim()
-                  ? 'bg-blue-500 cursor-pointer hover:bg-blue-600'
-                  : 'bg-gray-300 '
-              }`}
-            >
-              {isLoading ? (
-                <Square
-                  size={18}
-                  className="cursor-pointer text-white font-semibold hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)]"
-                />
-              ) : (
-                <ArrowUp size={18} className={`text-white font-semibold`} />
-              )}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleSubmit}
+                  className={`absolute bottom-3 right-3 size-8 flex justify-center items-center transition-all duration-200 rounded-full ${
+                    inputText.trim()
+                      ? 'bg-blue-500 cursor-pointer hover:bg-blue-600'
+                      : 'bg-gray-300 '
+                  }`}
+                  disabled={!isLoading && inputText.trim() === ''}
+                >
+                  {isLoading ? (
+                    <Square
+                      size={18}
+                      className="cursor-pointer text-white font-semibold hover:opacity-90 hover:bg-[rgba(0,0,0,0.04)]"
+                    />
+                  ) : (
+                    <ArrowUp size={18} className={`text-white font-semibold`} />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="!z-100">
+                {isLoading ? '停止生成' : '发送消息'}
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </section>

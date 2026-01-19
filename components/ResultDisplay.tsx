@@ -7,6 +7,8 @@ import ExcelViewer from './ExcelViewer';
 import { Markdown } from './Markdown';
 
 interface ClassificationResult {
+  dataSource: string;
+  databaseName: string;
   tableName: string;
   field: string;
   fieldDescription: string;
@@ -27,11 +29,15 @@ interface DataResults {
 interface ResultDisplayProps {
   results: DataResults;
   onClearResult: () => void;
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 export default function ResultDisplay({
   results,
   onClearResult,
+  onRefresh,
+  isLoading = false,
 }: ResultDisplayProps) {
   const handleDownload = () => {
     if (results.type !== 'markdown') return;
@@ -50,34 +56,22 @@ export default function ResultDisplay({
     URL.revokeObjectURL(url);
   };
   return (
-    <Card className="w-full h-auto">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-2xl font-bold">
-          {results.type === 'table' ? '数据分类结果' : '分析结果'}
-        </CardTitle>
-        <div className="flex gap-2">
-          {results.type === 'markdown' && (
-            <Button variant="outline" size="sm" onClick={handleDownload}>
-              <Download className="h-4 w-4 mr-2" />
-              下载Markdown
-            </Button>
-          )}
-          <Button variant="outline" size="sm" onClick={onClearResult}>
-            清除结果
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="flex flex-col px-5">
+    <div className="w-full h-auto">
+      <div className="p-0">
+        <div className="flex flex-col">
           <div className="flex-grow overflow-auto">
             {results.type === 'table' ? (
-              <ExcelViewer data={results.data as ClassificationResult[]} />
+              <ExcelViewer
+                data={results.data as ClassificationResult[]}
+                onRefresh={onRefresh}
+                isLoading={isLoading}
+              />
             ) : (
               <Markdown>{results.data as string}</Markdown>
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

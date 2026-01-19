@@ -1,11 +1,12 @@
 import { Markdown } from './Markdown';
 
-export default function Message({ message, status }) {
+export default function Message({ message, status, active, stopped }) {
   return (
     <div key={message.id} className="flex flex-col ml-4 mb-4">
-      {status == 'streaming' && message.role == 'assistant' && (
+      {status == 'submitted' && message.role == 'assistant' && active && (
         <span>loading</span>
       )}
+
       {message.parts.map((part, i) => {
         switch (part.type) {
           case 'reasoning':

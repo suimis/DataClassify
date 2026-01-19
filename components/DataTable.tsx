@@ -17,6 +17,7 @@ import {
   Download,
   Maximize,
   Minimize,
+  RefreshCw,
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 
@@ -38,9 +39,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import * as XLSX from 'xlsx';
 
 interface ClassificationResult {
+  dataSource: string;
+  databaseName: string;
   tableName: string;
   field: string;
   fieldDescription: string;
@@ -49,15 +58,21 @@ interface ClassificationResult {
   thirdLevelCategory: string;
   fourthLevelCategory: string;
   sensitivityClassification: string;
-  classificationReason: string;
   taggingMethod: string;
+  classificationReason: string;
 }
 
 interface DataTableProps {
   data: ClassificationResult[];
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
-export default function DataTable({ data }: DataTableProps) {
+export default function DataTable({
+  data,
+  onRefresh,
+  isLoading = false,
+}: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -77,7 +92,7 @@ export default function DataTable({ data }: DataTableProps) {
     // 应用搜索筛选
     if (searchTerm) {
       result = result.filter((item) =>
-        item.field.toLowerCase().includes(searchTerm.toLowerCase())
+        item.field.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -85,6 +100,40 @@ export default function DataTable({ data }: DataTableProps) {
   }, [filteredData, searchTerm]);
 
   const columns: ColumnDef<ClassificationResult>[] = [
+    {
+      accessorKey: 'dataSource',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            数据源
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div>{row.getValue('dataSource')}</div>,
+    },
+    {
+      accessorKey: 'databaseName',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            库名
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div>{row.getValue('databaseName')}</div>,
+    },
     {
       accessorKey: 'tableName',
       header: ({ column }) => {
@@ -241,13 +290,30 @@ export default function DataTable({ data }: DataTableProps) {
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getSensitivityColor(
-              sensitivity
+              sensitivity,
             )}`}
           >
             {sensitivity}
           </span>
         );
       },
+    },
+    {
+      accessorKey: 'taggingMethod',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            打标方式
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div>{row.getValue('taggingMethod')}</div>,
     },
     {
       accessorKey: 'classificationReason',
@@ -269,23 +335,6 @@ export default function DataTable({ data }: DataTableProps) {
           {row.getValue('classificationReason')}
         </div>
       ),
-    },
-    {
-      accessorKey: 'taggingMethod',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-2"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            打标方式
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div>{row.getValue('taggingMethod')}</div>,
     },
   ];
 
@@ -317,6 +366,8 @@ export default function DataTable({ data }: DataTableProps) {
   const handleDownload = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       data.map((item) => ({
+        数据源: item.dataSource,
+        库名: item.databaseName,
         表名: item.tableName,
         字段: item.field,
         字段描述: item.fieldDescription,
@@ -325,9 +376,9 @@ export default function DataTable({ data }: DataTableProps) {
         三级分类: item.thirdLevelCategory,
         四级分类: item.fourthLevelCategory,
         敏感性分类: item.sensitivityClassification,
-        分类理由: item.classificationReason,
         打标方式: item.taggingMethod,
-      }))
+        分类理由: item.classificationReason,
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, '数据分类结果');
@@ -354,7 +405,7 @@ export default function DataTable({ data }: DataTableProps) {
             onClick={() => table.setPageIndex(i)}
           >
             {i + 1}
-          </Button>
+          </Button>,
         );
       }
     } else {
@@ -368,7 +419,7 @@ export default function DataTable({ data }: DataTableProps) {
           onClick={() => table.setPageIndex(0)}
         >
           1
-        </Button>
+        </Button>,
       );
 
       // Logic for ellipsis and page numbers
@@ -376,7 +427,7 @@ export default function DataTable({ data }: DataTableProps) {
         pageButtons.push(
           <span key="ellipsis-start" className="px-2">
             ...
-          </span>
+          </span>,
         );
       }
 
@@ -399,7 +450,7 @@ export default function DataTable({ data }: DataTableProps) {
             onClick={() => table.setPageIndex(i)}
           >
             {i + 1}
-          </Button>
+          </Button>,
         );
       }
 
@@ -407,7 +458,7 @@ export default function DataTable({ data }: DataTableProps) {
         pageButtons.push(
           <span key="ellipsis-end" className="px-2">
             ...
-          </span>
+          </span>,
         );
       }
 
@@ -421,7 +472,7 @@ export default function DataTable({ data }: DataTableProps) {
           onClick={() => table.setPageIndex(totalPages - 1)}
         >
           {totalPages}
-        </Button>
+        </Button>,
       );
     }
 
@@ -445,31 +496,70 @@ export default function DataTable({ data }: DataTableProps) {
             }
             className="max-w-sm"
           />
-          <AdvancedFilter data={data} onFilterChange={setFilteredData} />
+          <AdvancedFilter
+            data={data}
+            onFilterChange={(filteredData: ClassificationResult[]) => {
+              setFilteredData(filteredData);
+            }}
+          />
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            onClick={toggleFullscreen}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            {isFullscreen ? (
-              <Minimize className="h-4 w-4" />
-            ) : (
-              <Maximize className="h-4 w-4" />
+          <TooltipProvider>
+            {onRefresh && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onRefresh}
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer"
+                    disabled={isLoading}
+                  >
+                    <RefreshCw
+                      className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="">刷新</p>
+                </TooltipContent>
+              </Tooltip>
             )}
-            {isFullscreen ? '退出全屏' : '全屏查看'}
-          </Button>
-          <Button
-            onClick={handleDownload}
-            variant="default"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            下载Excel
-          </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={toggleFullscreen}
+                  variant="outline"
+                  size="icon"
+                  className="cursor-pointer"
+                >
+                  {isFullscreen ? (
+                    <Minimize className="h-4 w-4" />
+                  ) : (
+                    <Maximize className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="">{isFullscreen ? '退出全屏' : '全屏查看'}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleDownload}
+                  variant="default"
+                  size="icon"
+                  className="cursor-pointer"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="">下载Excel</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div
@@ -494,7 +584,7 @@ export default function DataTable({ data }: DataTableProps) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -517,7 +607,7 @@ export default function DataTable({ data }: DataTableProps) {
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -529,13 +619,14 @@ export default function DataTable({ data }: DataTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center p-2 align-middle whitespace-nowrap"
                 >
-                  暂无数据
+                  <div className="">暂无数据</div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center space-x-4">
           <p className="text-sm text-muted-foreground">
@@ -554,7 +645,7 @@ export default function DataTable({ data }: DataTableProps) {
               </SelectTrigger>
               <SelectContent className="z-[9999]">
                 {[5, 10, 20, 50, 100].map((size) => (
-                  <SelectItem key={size} value={size.toString()}>
+                  <SelectItem key={size} value={size.toString()} className="">
                     {size}
                   </SelectItem>
                 ))}

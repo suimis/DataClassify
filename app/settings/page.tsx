@@ -19,8 +19,12 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { aiService } from '@/lib/ai-service';
-import { Switch } from '@/components/ui/switch';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 interface AIModelConfig {
   provider: string;
   modelName: string;
