@@ -481,7 +481,7 @@ export default function DataTable({
 
   return (
     <div
-      className={`w-full ${
+      className={`w-full h-full flex flex-col ${
         isFullscreen ? 'fixed inset-0 z-50 bg-white p-6' : ''
       }`}
     >
@@ -627,7 +627,7 @@ export default function DataTable({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between space-x-2 py-4">
+      <div className="flex mt-auto items-center justify-between space-x-2 py-4">
         <div className="flex items-center space-x-4">
           <p className="text-sm text-muted-foreground">
             共 {table.getFilteredRowModel().rows.length} 条记录

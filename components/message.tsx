@@ -1,6 +1,11 @@
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from './ai-elements/reasoning';
 import { Markdown } from './Markdown';
 
-export default function Message({ message, status, active, stopped }) {
+export default function Message({ message, status, active, last }) {
   return (
     <div key={message.id} className="flex flex-col ml-4 mb-4">
       {status == 'submitted' && message.role == 'assistant' && active && (
@@ -10,7 +15,20 @@ export default function Message({ message, status, active, stopped }) {
       {message.parts.map((part, i) => {
         switch (part.type) {
           case 'reasoning':
-            return <pre key={i}>{part.text}</pre>;
+            return (
+              <Reasoning
+                key={`${message.id}-${i}`}
+                className="w-full"
+                isStreaming={
+                  status === 'streaming' &&
+                  i === message.parts.length - 1 &&
+                  message.id === last
+                }
+              >
+                <ReasoningTrigger />
+                <ReasoningContent>{part.text}</ReasoningContent>
+              </Reasoning>
+            );
           case 'text':
             return (
               <div

@@ -28,17 +28,17 @@ const items = [
     url: '/chat',
     icon: MessageCircle,
   },
-
-  {
-    title: '数据分类分级',
-    url: '/classify',
-    icon: Shapes,
-  },
   {
     title: '元数据管理',
     url: '/source-data',
     icon: Usb,
   },
+  {
+    title: '分类分级统计',
+    url: '/statistics',
+    icon: Shapes,
+  },
+
   {
     title: '设置',
     url: '/settings',
@@ -65,12 +65,11 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <DatabaseZap className="size-4" />
+                <div className=" flex size-10 items-center justify-center rounded-lg">
+                  <img src={'logo.webp'} className="bg-white" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">数据治理ai平台</span>
-                  <span className="truncate text-xs">v0.0.1</span>
+                <div className="grid flex-1 text-left text-md leading-tight flex items-center">
+                  <span className="truncate font-medium">智数中心</span>
                 </div>
               </Link>
             </SidebarMenuButton>

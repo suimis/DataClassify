@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react'; // Add Download icon
 import ExcelViewer from './ExcelViewer';
 import { Markdown } from './Markdown';
+import DataTable from './DataTable';
 
 interface ClassificationResult {
   dataSource: string;
@@ -56,20 +57,18 @@ export default function ResultDisplay({
     URL.revokeObjectURL(url);
   };
   return (
-    <div className="w-full h-auto">
-      <div className="p-0">
-        <div className="flex flex-col">
-          <div className="flex-grow overflow-auto">
-            {results.type === 'table' ? (
-              <ExcelViewer
-                data={results.data as ClassificationResult[]}
-                onRefresh={onRefresh}
-                isLoading={isLoading}
-              />
-            ) : (
-              <Markdown>{results.data as string}</Markdown>
-            )}
-          </div>
+    <div className="w-full h-full">
+      <div className="flex flex-col h-full">
+        <div className="flex-grow overflow-auto h-full">
+          {results.type === 'table' ? (
+            <DataTable
+              data={results.data as ClassificationResult[]}
+              onRefresh={onRefresh}
+              isLoading={isLoading}
+            />
+          ) : (
+            <Markdown>{results.data as string}</Markdown>
+          )}
         </div>
       </div>
     </div>

@@ -28,9 +28,5 @@ export default function ExcelViewer({
   onRefresh,
   isLoading = false,
 }: ExcelViewerProps) {
-  return (
-    <div className="w-full">
-      <DataTable data={data} onRefresh={onRefresh} isLoading={isLoading} />
-    </div>
-  );
+  return <DataTable data={data} onRefresh={onRefresh} isLoading={isLoading} />;
 }

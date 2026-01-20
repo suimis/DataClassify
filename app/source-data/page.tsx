@@ -209,10 +209,10 @@ export default function SourceDataPage() {
 
       {/* 内容区域 */}
       <div className="flex-1 overflow-y-auto m-2">
-        <div className="container mx-auto flex flex-col items-center">
+        <div className="container h-full mx-auto flex flex-col items-center">
           {/* 加载状态 */}
           {loading && !results && (
-            <div className="w-full max-w-6xl flex items-center justify-center py-12">
+            <div className="w-full max-w-6xl h-full flex items-center justify-center py-12">
               <div className="relative flex flex-col justify-center items-center">
                 <LottieAnimation width={120} height={120} />
                 <p className="text-gray-600 mt-4 absolute bottom-0">
@@ -247,7 +247,7 @@ export default function SourceDataPage() {
 
           {/* 结果展示区域 */}
           {results && (
-            <div className="mb-6 w-full max-w-6xl">
+            <div className="mb-6 w-full h-full max-w-6xl">
               <ResultDisplay
                 results={results}
                 onClearResult={handleClearResults}

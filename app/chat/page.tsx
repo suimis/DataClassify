@@ -127,6 +127,7 @@ export default function ChatPage() {
                 message={message}
                 status={status}
                 active={true}
+                last={message.id === messages.at(-1)?.id}
               />
             ))}
           </div>
