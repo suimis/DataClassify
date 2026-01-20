@@ -1,175 +1,231 @@
 'use client';
-import { useState } from 'react';
-import {
-  PromptInput,
-  type PromptInputMessage,
-  PromptInputSubmit,
-  PromptInputTextarea,
-} from '@/components/ai-elements/prompt-input';
-import { Message, MessageContent } from '@/components/ai-elements/message';
 import {
   Conversation,
   ConversationContent,
+  ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
 import {
-  WebPreview,
-  WebPreviewNavigation,
-  WebPreviewUrl,
-  WebPreviewBody,
-} from '@/components/ai-elements/web-preview';
+  Message,
+  MessageContent,
+  MessageResponse,
+  MessageActions,
+  MessageAction,
+} from '@/components/ai-elements/message';
+import {
+  PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
+  PromptInputButton,
+  PromptInputHeader,
+  type PromptInputMessage,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputFooter,
+  PromptInputTools,
+} from '@/components/ai-elements/prompt-input';
+import { Fragment, useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { CopyIcon, GlobeIcon, RefreshCcwIcon } from 'lucide-react';
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from '@/components/ai-elements/sources';
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from '@/components/ai-elements/reasoning';
 import { Loader } from '@/components/ai-elements/loader';
-import { Suggestions, Suggestion } from '@/components/ai-elements/suggestion';
-interface Chat {
-  id: string;
-  demo: string;
-}
-export default function Home() {
-  const [message, setMessage] = useState('');
-  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<
-    Array<{
-      type: 'user' | 'assistant';
-      content: string;
-    }>
-  >([]);
-  const handleSendMessage = async (promptMessage: PromptInputMessage) => {
-    const hasText = Boolean(promptMessage.text);
-    const hasAttachments = Boolean(promptMessage.files?.length);
-
-    if (!(hasText || hasAttachments) || isLoading) return;
-    const userMessage = promptMessage.text?.trim() || 'Sent with attachments';
-    setMessage('');
-    setIsLoading(true);
-    setChatHistory((prev) => [...prev, { type: 'user', content: userMessage }]);
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage,
-          chatId: currentChat?.id,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create chat');
-      }
-      const chat: Chat = await response.json();
-      setCurrentChat(chat);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          type: 'assistant',
-          content: 'Generated new app preview. Check the preview panel!',
-        },
-      ]);
-    } catch (error) {
-      console.error('Error:', error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          type: 'assistant',
-          content:
-            'Sorry, there was an error creating your app. Please try again.',
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
+const models = [
+  {
+    name: 'GPT 4o',
+    value: 'openai/gpt-4o',
+  },
+  {
+    name: 'Deepseek R1',
+    value: 'deepseek/deepseek-r1',
+  },
+];
+const ChatBotDemo = () => {
+  const [input, setInput] = useState('');
+  const [model, setModel] = useState<string>(models[0].value);
+  const [webSearch, setWebSearch] = useState(false);
+  const { messages, sendMessage, status, regenerate } = useChat();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
+    if (!(hasText || hasAttachments)) {
+      return;
     }
+    sendMessage(
+      {
+        text: message.text || 'Sent with attachments',
+        files: message.files,
+      },
+      {
+        body: {
+          model: model,
+          webSearch: webSearch,
+        },
+      },
+    );
+    setInput('');
   };
   return (
-    <div className="h-screen flex">
-      {/* Chat Panel */}
-      <div className="w-1/2 flex flex-col border-r">
-        {/* Header */}
-        <div className="border-b p-3 h-14 flex items-center justify-between">
-          <h1 className="text-lg font-semibold">v0 Clone</h1>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {chatHistory.length === 0 ? (
-            <div className="text-center font-semibold mt-8">
-              <p className="text-3xl mt-4">What can we build together?</p>
-            </div>
-          ) : (
-            <>
-              <Conversation>
-                <ConversationContent>
-                  {chatHistory.map((msg, index) => (
-                    <Message from={msg.type} key={index}>
-                      <MessageContent>{msg.content}</MessageContent>
-                    </Message>
-                  ))}
-                </ConversationContent>
-              </Conversation>
-              {isLoading && (
-                <Message from="assistant">
-                  <MessageContent>
-                    <div className="flex items-center gap-2">
-                      <Loader />
-                      Creating your app...
-                    </div>
-                  </MessageContent>
-                </Message>
-              )}
-            </>
-          )}
-        </div>
-        {/* Input */}
-        <div className="border-t p-4">
-          {!currentChat && (
-            <Suggestions>
-              <Suggestion
-                onClick={() =>
-                  setMessage('Create a responsive navbar with Tailwind CSS')
-                }
-                suggestion="Create a responsive navbar with Tailwind CSS"
-              />
-              <Suggestion
-                onClick={() => setMessage('Build a todo app with React')}
-                suggestion="Build a todo app with React"
-              />
-              <Suggestion
-                onClick={() =>
-                  setMessage('Make a landing page for a coffee shop')
-                }
-                suggestion="Make a landing page for a coffee shop"
-              />
-            </Suggestions>
-          )}
-          <div className="flex gap-2">
-            <PromptInput
-              onSubmit={handleSendMessage}
-              className="mt-4 w-full max-w-2xl mx-auto relative"
-            >
-              <PromptInputTextarea
-                onChange={(e) => setMessage(e.target.value)}
-                value={message}
-                className="pr-12 min-h-[60px]"
-              />
-              <PromptInputSubmit
-                className="absolute bottom-1 right-1"
-                disabled={!message}
-                status={isLoading ? 'streaming' : 'ready'}
-              />
-            </PromptInput>
-          </div>
-        </div>
-      </div>
-      {/* Preview Panel */}
-      <div className="w-1/2 flex flex-col">
-        <WebPreview>
-          <WebPreviewNavigation>
-            <WebPreviewUrl
-              readOnly
-              placeholder="Your app here..."
-              value={currentChat?.demo}
+    <div className="max-w-4xl mx-auto p-6 relative size-full h-screen">
+      <div className="flex flex-col h-full">
+        <Conversation className="h-full">
+          <ConversationContent>
+            {messages.map((message) => (
+              <div key={message.id}>
+                {message.role === 'assistant' &&
+                  message.parts.filter((part) => part.type === 'source-url')
+                    .length > 0 && (
+                    <Sources>
+                      <SourcesTrigger
+                        count={
+                          message.parts.filter(
+                            (part) => part.type === 'source-url',
+                          ).length
+                        }
+                      />
+                      {message.parts
+                        .filter((part) => part.type === 'source-url')
+                        .map((part, i) => (
+                          <SourcesContent key={`${message.id}-${i}`}>
+                            <Source
+                              key={`${message.id}-${i}`}
+                              href={part.url}
+                              title={part.url}
+                            />
+                          </SourcesContent>
+                        ))}
+                    </Sources>
+                  )}
+                {message.parts.map((part, i) => {
+                  switch (part.type) {
+                    case 'text':
+                      return (
+                        <Message key={`${message.id}-${i}`} from={message.role}>
+                          <MessageContent>
+                            <MessageResponse>{part.text}</MessageResponse>
+                          </MessageContent>
+                          {message.role === 'assistant' &&
+                            i === messages.length - 1 && (
+                              <MessageActions>
+                                <MessageAction
+                                  onClick={() => regenerate()}
+                                  label="Retry"
+                                >
+                                  <RefreshCcwIcon className="size-3" />
+                                </MessageAction>
+                                <MessageAction
+                                  onClick={() =>
+                                    navigator.clipboard.writeText(part.text)
+                                  }
+                                  label="Copy"
+                                >
+                                  <CopyIcon className="size-3" />
+                                </MessageAction>
+                              </MessageActions>
+                            )}
+                        </Message>
+                      );
+                    case 'reasoning':
+                      return (
+                        <Reasoning
+                          key={`${message.id}-${i}`}
+                          className="w-full"
+                          isStreaming={
+                            status === 'streaming' &&
+                            i === message.parts.length - 1 &&
+                            message.id === messages.at(-1)?.id
+                          }
+                        >
+                          <ReasoningTrigger />
+                          <ReasoningContent>{part.text}</ReasoningContent>
+                        </Reasoning>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
+            ))}
+            {status === 'submitted' && <Loader />}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+        <PromptInput
+          onSubmit={handleSubmit}
+          className="mt-4"
+          globalDrop
+          multiple
+        >
+          <PromptInputHeader>
+            <PromptInputAttachments>
+              {(attachment) => <PromptInputAttachment data={attachment} />}
+            </PromptInputAttachments>
+          </PromptInputHeader>
+          <PromptInputBody>
+            <PromptInputTextarea
+              onChange={(e) => setInput(e.target.value)}
+              value={input}
             />
-          </WebPreviewNavigation>
-          <WebPreviewBody src={currentChat?.demo} />
-        </WebPreview>
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools>
+              <PromptInputActionMenu>
+                <PromptInputActionMenuTrigger />
+                <PromptInputActionMenuContent>
+                  <PromptInputActionAddAttachments />
+                </PromptInputActionMenuContent>
+              </PromptInputActionMenu>
+              <PromptInputButton
+                variant={webSearch ? 'default' : 'ghost'}
+                onClick={() => setWebSearch(!webSearch)}
+              >
+                <GlobeIcon size={16} />
+                <span>Search</span>
+              </PromptInputButton>
+              <PromptInputSelect
+                onValueChange={(value) => {
+                  setModel(value);
+                }}
+                value={model}
+              >
+                <PromptInputSelectTrigger>
+                  <PromptInputSelectValue />
+                </PromptInputSelectTrigger>
+                <PromptInputSelectContent>
+                  {models.map((model) => (
+                    <PromptInputSelectItem
+                      key={model.value}
+                      value={model.value}
+                    >
+                      {model.name}
+                    </PromptInputSelectItem>
+                  ))}
+                </PromptInputSelectContent>
+              </PromptInputSelect>
+            </PromptInputTools>
+            <PromptInputSubmit disabled={!input && !status} status={status} />
+          </PromptInputFooter>
+        </PromptInput>
       </div>
     </div>
   );
-}
+};
+export default ChatBotDemo;

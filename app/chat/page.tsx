@@ -1,18 +1,48 @@
 'use client';
 
-import { FileText, X, ArrowUp, Loader2, Square } from 'lucide-react';
+import {
+  FileText,
+  X,
+  ArrowUp,
+  Square,
+  RefreshCcwIcon,
+  CopyIcon,
+} from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Textarea from 'react-textarea-autosize';
 import FileUpload from '@/components/FileUpload';
 import CanvasBackground from '@/components/canvas-background';
 import { useChat } from '@ai-sdk/react';
-import Message from '@/components/message';
+import { Loader } from '@/components/ai-elements/loader';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+  MessageActions,
+  MessageAction,
+} from '@/components/ai-elements/message';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from '@/components/ai-elements/sources';
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from '@/components/ai-elements/reasoning';
 
 export default function ChatPage() {
   const {
@@ -121,15 +151,94 @@ export default function ChatPage() {
           className={`${messages.length === 0 ? 'hidden' : 'mx-auto w-200'}`}
         >
           <div className="container mx-auto py-4 px-4">
-            {messages.map((message, i) => (
-              <Message
-                key={i}
-                message={message}
-                status={status}
-                active={true}
-                last={message.id === messages.at(-1)?.id}
-              />
-            ))}
+            <Conversation className="h-full">
+              <ConversationContent>
+                {messages.map((message) => (
+                  <div key={message.id}>
+                    {message.role === 'assistant' &&
+                      message.parts.filter((part) => part.type === 'source-url')
+                        .length > 0 && (
+                        <Sources>
+                          <SourcesTrigger
+                            count={
+                              message.parts.filter(
+                                (part) => part.type === 'source-url',
+                              ).length
+                            }
+                          />
+                          {message.parts
+                            .filter((part) => part.type === 'source-url')
+                            .map((part, i) => (
+                              <SourcesContent key={`${message.id}-${i}`}>
+                                <Source
+                                  key={`${message.id}-${i}`}
+                                  href={part.url}
+                                  title={part.url}
+                                />
+                              </SourcesContent>
+                            ))}
+                        </Sources>
+                      )}
+                    {message.parts.map((part, i) => {
+                      switch (part.type) {
+                        case 'text':
+                          return (
+                            <Message
+                              key={`${message.id}-${i}`}
+                              from={message.role}
+                            >
+                              <MessageContent>
+                                <MessageResponse>{part.text}</MessageResponse>
+                              </MessageContent>
+                              {message.role === 'assistant' &&
+                                i === messages.length - 1 && (
+                                  <MessageActions>
+                                    <MessageAction
+                                      className="cursor-pointer"
+                                      onClick={() => regenerate()}
+                                      label="Retry"
+                                    >
+                                      <RefreshCcwIcon className="size-3" />
+                                    </MessageAction>
+                                    <MessageAction
+                                      className="cursor-pointer"
+                                      onClick={() =>
+                                        navigator.clipboard.writeText(part.text)
+                                      }
+                                      label="Copy"
+                                    >
+                                      <CopyIcon className="size-3" />
+                                    </MessageAction>
+                                  </MessageActions>
+                                )}
+                            </Message>
+                          );
+                        case 'reasoning':
+                          return (
+                            <Reasoning
+                              key={`${message.id}-${i}`}
+                              className="w-full"
+                              isStreaming={
+                                status === 'streaming' &&
+                                i === message.parts.length - 1 &&
+                                message.id === messages.at(-1)?.id
+                              }
+                            >
+                              <ReasoningTrigger />
+                              <ReasoningContent>{part.text}</ReasoningContent>
+                            </Reasoning>
+                          );
+                        default:
+                          return null;
+                      }
+                    })}
+                  </div>
+                ))}
+
+                {status === 'submitted' && <Loader className="mr-auto" />}
+              </ConversationContent>
+              <ConversationScrollButton />
+            </Conversation>
           </div>
         </div>
       </div>
