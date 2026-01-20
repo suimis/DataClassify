@@ -289,7 +289,7 @@ export default function AdvancedFilter({
           >
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <span className="">高级筛选</span>
+              <span className="">筛选</span>
               {filters.length > 0 && (
                 <Badge variant="secondary" className="ml-2">
                   {filters.length}

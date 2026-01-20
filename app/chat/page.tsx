@@ -8,7 +8,7 @@ import {
   RefreshCcwIcon,
   CopyIcon,
 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Textarea from 'react-textarea-autosize';
 import FileUpload from '@/components/FileUpload';
@@ -19,6 +19,7 @@ import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
+  ConversationEmptyState,
 } from '@/components/ai-elements/conversation';
 import {
   Message,
@@ -59,9 +60,6 @@ export default function ChatPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLDivElement>(null);
-
   const handleFileUpload = (file: File | null) => {
     setUploadedFile(file);
   };
@@ -70,7 +68,7 @@ export default function ChatPage() {
     setUploadedFile(null);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status == 'ready' || status == 'error') {
       sendMessage({ text: inputText });
@@ -83,21 +81,7 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    if (status == 'ready' || status == 'error') {
-      setIsLoading(false);
-    }
-
-    if (status == 'submitted' || status == 'streaming') {
-      setIsLoading(true);
-    }
-
-    if (status == 'submitted') {
-      // 滚动到底部
-      contentRef.current?.scrollTo({
-        top: contentRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
+    setIsLoading(status === 'submitted' || status === 'streaming');
   }, [status]);
 
   return (
@@ -147,108 +131,106 @@ export default function ChatPage() {
 
         {/* 对话内容区域 */}
         <div
-          ref={contentRef}
-          className={`${messages.length === 0 ? 'hidden' : 'mx-auto w-200'}`}
+          className={`${messages.length === 0 ? 'hidden' : 'mx-auto w-220'}`}
         >
-          <div className="container mx-auto py-4 px-4">
-            <Conversation className="h-full">
-              <ConversationContent>
-                {messages.map((message) => (
-                  <div key={message.id}>
-                    {message.role === 'assistant' &&
-                      message.parts.filter((part) => part.type === 'source-url')
-                        .length > 0 && (
-                        <Sources>
-                          <SourcesTrigger
-                            count={
-                              message.parts.filter(
-                                (part) => part.type === 'source-url',
-                              ).length
+          <Conversation className="h-full">
+            <ConversationContent className="py-4 px-4">
+              {messages.map((message) => (
+                <div key={message.id} className="w-full">
+                  {message.role === 'assistant' &&
+                    message.parts.filter((part) => part.type === 'source-url')
+                      .length > 0 && (
+                      <Sources>
+                        <SourcesTrigger
+                          count={
+                            message.parts.filter(
+                              (part) => part.type === 'source-url',
+                            ).length
+                          }
+                        />
+                        {message.parts
+                          .filter((part) => part.type === 'source-url')
+                          .map((part, i) => (
+                            <SourcesContent key={`${message.id}-${i}`}>
+                              <Source
+                                key={`${message.id}-${i}`}
+                                href={part.url}
+                                title={part.url}
+                              />
+                            </SourcesContent>
+                          ))}
+                      </Sources>
+                    )}
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case 'text':
+                        return (
+                          <Message
+                            key={`${message.id}-${i}`}
+                            from={message.role}
+                          >
+                            <MessageContent>
+                              <MessageResponse>{part.text}</MessageResponse>
+                            </MessageContent>
+                            {message.role === 'assistant' &&
+                              message.id === messages.at(-1)?.id && (
+                                <MessageActions>
+                                  <MessageAction
+                                    className="cursor-pointer"
+                                    onClick={() => regenerate()}
+                                    label="Retry"
+                                    tooltip="Retry"
+                                  >
+                                    <RefreshCcwIcon className="size-3" />
+                                  </MessageAction>
+                                  <MessageAction
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      navigator.clipboard.writeText(part.text)
+                                    }
+                                    label="Copy"
+                                    tooltip="Copy"
+                                  >
+                                    <CopyIcon className="size-3" />
+                                  </MessageAction>
+                                </MessageActions>
+                              )}
+                          </Message>
+                        );
+                      case 'reasoning':
+                        return (
+                          <Reasoning
+                            key={`${message.id}-${i}`}
+                            className="w-full"
+                            isStreaming={
+                              status === 'streaming' &&
+                              i === message.parts.length - 1 &&
+                              message.id === messages.at(-1)?.id
                             }
-                          />
-                          {message.parts
-                            .filter((part) => part.type === 'source-url')
-                            .map((part, i) => (
-                              <SourcesContent key={`${message.id}-${i}`}>
-                                <Source
-                                  key={`${message.id}-${i}`}
-                                  href={part.url}
-                                  title={part.url}
-                                />
-                              </SourcesContent>
-                            ))}
-                        </Sources>
-                      )}
-                    {message.parts.map((part, i) => {
-                      switch (part.type) {
-                        case 'text':
-                          return (
-                            <Message
-                              key={`${message.id}-${i}`}
-                              from={message.role}
-                            >
-                              <MessageContent>
-                                <MessageResponse>{part.text}</MessageResponse>
-                              </MessageContent>
-                              {message.role === 'assistant' &&
-                                i === messages.length - 1 && (
-                                  <MessageActions>
-                                    <MessageAction
-                                      className="cursor-pointer"
-                                      onClick={() => regenerate()}
-                                      label="Retry"
-                                    >
-                                      <RefreshCcwIcon className="size-3" />
-                                    </MessageAction>
-                                    <MessageAction
-                                      className="cursor-pointer"
-                                      onClick={() =>
-                                        navigator.clipboard.writeText(part.text)
-                                      }
-                                      label="Copy"
-                                    >
-                                      <CopyIcon className="size-3" />
-                                    </MessageAction>
-                                  </MessageActions>
-                                )}
-                            </Message>
-                          );
-                        case 'reasoning':
-                          return (
-                            <Reasoning
-                              key={`${message.id}-${i}`}
-                              className="w-full"
-                              isStreaming={
-                                status === 'streaming' &&
-                                i === message.parts.length - 1 &&
-                                message.id === messages.at(-1)?.id
-                              }
-                            >
-                              <ReasoningTrigger />
-                              <ReasoningContent>{part.text}</ReasoningContent>
-                            </Reasoning>
-                          );
-                        default:
-                          return null;
-                      }
-                    })}
-                  </div>
-                ))}
+                          >
+                            <ReasoningTrigger />
+                            <ReasoningContent>{part.text}</ReasoningContent>
+                          </Reasoning>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </div>
+              ))}
 
-                {status === 'submitted' && <Loader className="mr-auto" />}
-              </ConversationContent>
-              <ConversationScrollButton />
-            </Conversation>
-          </div>
+              {status === 'submitted' && <Loader className="mr-auto" />}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
         </div>
       </div>
       <section
-        ref={inputRef}
         className={`w-full flex justify-center pb-4 mb-4 z-100 ${
           messages.length === 0 ? 'pt-75' : 'mt-auto bg-background'
         }`}
       >
-        <div className="relative flex flex-col bg-white justify-center w-188 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
+        <div className="relative flex flex-col bg-white justify-center w-210 z-[90] border border-neutral-200/50 dark:border-white/15 rounded-2xl transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700">
           <Textarea
             placeholder="发消息，开始你的数据治理之路..."
             rows={2}

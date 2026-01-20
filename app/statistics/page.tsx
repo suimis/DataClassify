@@ -44,7 +44,7 @@ export default function Page() {
 
       <section className="grid grid-cols-3 grid-rows-3 m-5">
         <PieChartCard
-          title="字段统计"
+          title="分类统计"
           icon={<BookText className="size-5" />}
           data={chartData}
           config={chartConfig}
