@@ -23,7 +23,7 @@ const items = [
     icon: MessageCircle,
   },
   {
-    title: '调度',
+    title: '分类分级任务',
     url: '/schedule',
     icon: ListMinus,
   },
