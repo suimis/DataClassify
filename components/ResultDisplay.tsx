@@ -1,9 +1,5 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react'; // Add Download icon
-import ExcelViewer from './ExcelViewer';
 import { Markdown } from './Markdown';
 import DataTable from './DataTable';
 import { DisplayClassificationResult, DisplayDataResults } from '@/lib/types';
@@ -40,7 +36,7 @@ export default function ResultDisplay({
   return (
     <div className="w-full h-full">
       <div className="flex flex-col h-full">
-        <div className="flex-grow overflow-auto h-full">
+        <div className="grow overflow-auto h-full">
           {results.type === 'table' ? (
             <DataTable
               data={results.data as DisplayClassificationResult[]}

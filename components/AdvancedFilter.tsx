@@ -299,7 +299,7 @@ export default function AdvancedFilter({
             <Plus className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[600px] p-4 z-[9999] pointer-events-auto">
+        <PopoverContent className="w-150 p-4 z-9999 pointer-events-auto">
           <div className="space-y-4">
             {/* 筛选条件列表 */}
             <div className="space-y-3">
@@ -318,15 +318,11 @@ export default function AdvancedFilter({
                         }
                       >
                         <SelectTrigger className="w-20 h-8">
-                          <SelectValue placeholder="" />
+                          <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="z-[10000]">
-                          <SelectItem value="AND" className="">
-                            AND
-                          </SelectItem>
-                          <SelectItem value="OR" className="">
-                            OR
-                          </SelectItem>
+                        <SelectContent className="z-10000">
+                          <SelectItem value="AND">AND</SelectItem>
+                          <SelectItem value="OR">OR</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -353,13 +349,9 @@ export default function AdvancedFilter({
                       <SelectTrigger className="w-32 h-8">
                         <SelectValue placeholder="" />
                       </SelectTrigger>
-                      <SelectContent className="z-[10000]">
+                      <SelectContent className="z-10000">
                         {fieldOptions.map((option) => (
-                          <SelectItem
-                            key={option.value}
-                            value={option.value}
-                            className=""
-                          >
+                          <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
@@ -374,15 +366,11 @@ export default function AdvancedFilter({
                       }
                     >
                       <SelectTrigger className="w-24 h-8">
-                        <SelectValue placeholder="" />
+                        <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="z-[10000]">
+                      <SelectContent className="z-10000">
                         {operatorOptions.map((option) => (
-                          <SelectItem
-                            key={option.value}
-                            value={option.value}
-                            className=""
-                          >
+                          <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
@@ -418,7 +406,7 @@ export default function AdvancedFilter({
                                 : '选择值...'}
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-48 z-[10001]">
+                          <DropdownMenuContent className="w-48 z-10001">
                             {availableOptions[filter.field]?.map((option) => (
                               <DropdownMenuItem
                                 key={option}
@@ -435,7 +423,6 @@ export default function AdvancedFilter({
                                     : [...currentValues, option];
                                   updateFilter(filter.id, { value: newValues });
                                 }}
-                                className=""
                                 inset={false}
                               >
                                 <div className="flex items-center gap-2">
@@ -514,12 +501,7 @@ export default function AdvancedFilter({
                   </Button>
                 )}
               </div>
-              <Button
-                onClick={applyFilters}
-                variant="default"
-                size="sm"
-                className=""
-              >
+              <Button onClick={applyFilters} variant="default" size="sm">
                 应用筛选
               </Button>
             </div>

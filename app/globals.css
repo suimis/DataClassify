@@ -788,7 +788,8 @@ code {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply outline-gray-200/50;
+    border-color: var(--border);
   }
   body {
     @apply bg-background text-foreground;

@@ -5,7 +5,6 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -395,7 +394,6 @@ export default function DataTable({
         );
       }
     } else {
-      // Always show first page
       pageButtons.push(
         <Button
           key={0}
@@ -408,7 +406,6 @@ export default function DataTable({
         </Button>,
       );
 
-      // Logic for ellipsis and page numbers
       if (currentPage > 3) {
         pageButtons.push(
           <span key="ellipsis-start" className="px-2">
@@ -448,7 +445,6 @@ export default function DataTable({
         );
       }
 
-      // Always show last page
       pageButtons.push(
         <Button
           key={totalPages - 1}
@@ -550,7 +546,7 @@ export default function DataTable({
       </div>
       <div
         className={`rounded-md border ${
-          isFullscreen ? 'max-h-[calc(100vh-200px)]' : 'max-h-[500px]'
+          isFullscreen ? 'max-h-[calc(100vh-200px)]' : 'max-h-125'
         } overflow-auto`}
       >
         <Table className="w-full">
@@ -564,7 +560,7 @@ export default function DataTable({
                   return (
                     <TableHead
                       key={header.id}
-                      className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+                      className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5"
                     >
                       {header.isPlaceholder
                         ? null
@@ -626,10 +622,10 @@ export default function DataTable({
                 handlePageSizeChange(Number(value))
               }
             >
-              <SelectTrigger className="h-8 w-[70px]">
+              <SelectTrigger className="h-8 w-17.5">
                 <SelectValue placeholder={pageSize.toString()} />
               </SelectTrigger>
-              <SelectContent className="z-[9999]">
+              <SelectContent className="z-9999">
                 {[5, 10, 20, 50, 100].map((size) => (
                   <SelectItem key={size} value={size.toString()} className="">
                     {size}

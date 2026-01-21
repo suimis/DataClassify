@@ -92,9 +92,9 @@ export function PieChartCard({
 
   return (
     <Card
-      className={`!pt-3 transition-shadow duration-300 z-10 hover:shadow-lg ${className}`}
+      className={`pt-3! transition-shadow duration-300 z-10 hover:shadow-lg ${className}`}
     >
-      <CardHeader className="flex items-center justify-between border-b !pb-3">
+      <CardHeader className="flex items-center justify-between border-b pb-3!">
         <div className="flex gap-1 items-center">
           {icon}
           <span className="grey-font">{title}</span>
@@ -133,7 +133,7 @@ export function PieChartCard({
       <CardContent>
         <ChartContainer
           config={config}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square max-h-62.5"
         >
           <PieChart>
             <ChartTooltip
@@ -192,7 +192,7 @@ export function PieChartCard({
             <button
               key={item[nameKey] as string}
               onClick={() => handleSelect(item[nameKey] as string)}
-              className={`group flex cursor-pointer min-w-[52px] flex-col items-center rounded-md px-2 py-1.5 transition-all ${
+              className={`group flex cursor-pointer min-w-13 flex-col items-center rounded-md px-2 py-1.5 transition-all ${
                 selectedClassification === (item[nameKey] as string)
                   ? 'bg-blue-50 ring-1 ring-blue-200'
                   : 'bg-slate-50 hover:bg-slate-100'

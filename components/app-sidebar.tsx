@@ -1,11 +1,5 @@
 'use client';
-import {
-  DatabaseZap,
-  MessageCircle,
-  Settings,
-  Shapes,
-  Usb,
-} from 'lucide-react';
+import { MessageCircle, Settings, Shapes, Usb, ListMinus } from 'lucide-react';
 
 import {
   Sidebar,
@@ -27,6 +21,11 @@ const items = [
     title: '对话',
     url: '/chat',
     icon: MessageCircle,
+  },
+  {
+    title: '调度',
+    url: '/schedule',
+    icon: ListMinus,
   },
   {
     title: '元数据管理',
@@ -68,7 +67,7 @@ export function AppSidebar() {
                 <div className=" flex size-10 items-center justify-center rounded-lg">
                   <img src={'logo.webp'} className="bg-white" />
                 </div>
-                <div className="grid flex-1 text-left text-md leading-tight flex items-center">
+                <div className="flex-1 text-left text-md leading-tight flex items-center">
                   <span className="truncate font-medium">智数中心</span>
                 </div>
               </Link>
@@ -88,7 +87,7 @@ export function AppSidebar() {
                       className={cn(
                         'transition-all',
                         active
-                          ? '!bg-blue-600 !text-white hover:!text-white hover:!bg-blue-600 active:!bg-blue-600'
+                          ? 'bg-blue-600! text-white! hover:text-white! hover:bg-blue-600! active:bg-blue-600!'
                           : 'hover:bg-blue-100 hover:text-blue-600',
                       )}
                       isActive={active}

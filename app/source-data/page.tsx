@@ -219,9 +219,6 @@ export default function SourceDataPage() {
             <div className="w-full max-w-6xl h-full flex items-center justify-center py-12">
               <div className="relative flex flex-col justify-center items-center">
                 <LottieAnimation width={120} height={120} />
-                <p className="text-gray-600 mt-4 absolute bottom-0">
-                  正在加载数据...
-                </p>
               </div>
             </div>
           )}
