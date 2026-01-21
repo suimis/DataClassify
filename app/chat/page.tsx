@@ -178,8 +178,8 @@ export default function ChatPage() {
                                   <MessageAction
                                     className="cursor-pointer"
                                     onClick={() => regenerate()}
-                                    label="Retry"
-                                    tooltip="Retry"
+                                    label="重新生成"
+                                    tooltip="重新生成"
                                   >
                                     <RefreshCcwIcon className="size-3" />
                                   </MessageAction>
@@ -188,8 +188,8 @@ export default function ChatPage() {
                                     onClick={() =>
                                       navigator.clipboard.writeText(part.text)
                                     }
-                                    label="Copy"
-                                    tooltip="Copy"
+                                    label="复制"
+                                    tooltip="复制"
                                   >
                                     <CopyIcon className="size-3" />
                                   </MessageAction>

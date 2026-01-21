@@ -20,11 +20,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { aiService } from '@/lib/ai-service';
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 interface AIModelConfig {
   provider: string;
   modelName: string;
@@ -79,7 +74,7 @@ export default function SettingsPage() {
 
   const handleAIConfigChange = (
     key: keyof AIModelConfig,
-    value: string | number
+    value: string | number,
   ) => {
     const newConfig = { ...aiConfig, [key]: value };
     setAiConfig(newConfig);
@@ -91,7 +86,7 @@ export default function SettingsPage() {
 
   const handleSettingChange = (
     key: keyof Settings,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setSettings((prev) => ({
       ...prev,
@@ -121,14 +116,14 @@ export default function SettingsPage() {
         {
           temperature: 0.1,
           maxTokens: 50,
-        }
+        },
       );
 
       setTestResult('连接测试成功！AI响应正常。');
     } catch (error) {
       console.error('连接测试失败:', error);
       setTestResult(
-        `连接测试失败: ${error instanceof Error ? error.message : '未知错误'}`
+        `连接测试失败: ${error instanceof Error ? error.message : '未知错误'}`,
       );
     } finally {
       setIsTesting(false);
@@ -174,10 +169,11 @@ export default function SettingsPage() {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* 页面标题 */}
-      <div className="px-6 py-4 border-b">
-        <h1 className="text-2xl font-bold text-gray-800">系统配置</h1>
-        <p className="text-gray-600 mt-1">配置系统参数和用户偏好设置</p>
-      </div>
+      <section className="px-6 py-2 border-b flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800/90">系统配置</h1>
+        </div>
+      </section>
 
       {/* 配置内容 */}
       <div className="flex-1 overflow-y-auto">
@@ -293,7 +289,7 @@ export default function SettingsPage() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleAIConfigChange(
                           'temperature',
-                          parseFloat(e.target.value)
+                          parseFloat(e.target.value),
                         )
                       }
                     />
@@ -314,7 +310,7 @@ export default function SettingsPage() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleAIConfigChange(
                           'maxTokens',
-                          parseInt(e.target.value)
+                          parseInt(e.target.value),
                         )
                       }
                     />
@@ -358,7 +354,7 @@ export default function SettingsPage() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleAIConfigChange(
                           'frequencyPenalty',
-                          parseFloat(e.target.value)
+                          parseFloat(e.target.value),
                         )
                       }
                     />
@@ -382,7 +378,7 @@ export default function SettingsPage() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleAIConfigChange(
                           'presencePenalty',
-                          parseFloat(e.target.value)
+                          parseFloat(e.target.value),
                         )
                       }
                     />
