@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Search, Filter, Plus } from 'lucide-react';
+import { Search as SearchIcon, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -45,7 +45,7 @@ export default function Search({
         onSearch(query, filters);
       }
     },
-    [onSearch, filters]
+    [onSearch, filters],
   );
 
   // 处理过滤器变化
@@ -58,7 +58,7 @@ export default function Search({
         onFilter(newFilters);
       }
     },
-    [filters, onFilter]
+    [filters, onFilter],
   );
 
   // 处理搜索提交
@@ -91,7 +91,11 @@ export default function Search({
       <section className="flex flex-col gap-4">
         <div className="flex items-center border border-gray-300 rounded-lg py-2 px-4 bg-white relative">
           <div className="flex justify-center items-center w-6 h-6 mr-4">
-            <Search className="text-gray-500" size={18} aria-hidden="true" />
+            <SearchIcon
+              className="text-gray-500"
+              size={18}
+              aria-hidden="true"
+            />
           </div>
           <Input
             type="text"

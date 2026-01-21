@@ -66,8 +66,8 @@ export class ExcelParserUtils {
             new Error(
               `Excel文件解析失败: ${
                 error instanceof Error ? error.message : '未知错误'
-              }`
-            )
+              }`,
+            ),
           );
         }
       };
@@ -125,8 +125,8 @@ export class ExcelParserUtils {
             new Error(
               `数据Excel文件解析失败: ${
                 error instanceof Error ? error.message : '未知错误'
-              }`
-            )
+              }`,
+            ),
           );
         }
       };
@@ -143,7 +143,7 @@ export class ExcelParserUtils {
    * 将分类层级数据转换为Excel工作簿
    */
   static convertHierarchyToExcel(
-    hierarchies: ClassificationHierarchy[]
+    hierarchies: ClassificationHierarchy[],
   ): XLSX.WorkBook {
     const worksheetData = hierarchies.map((hierarchy) => ({
       一级分类: hierarchy.level1,
@@ -259,7 +259,7 @@ export class ExcelParserUtils {
 
             if (jsonData.length > 0) {
               totalRowCount += jsonData.length;
-              const firstRow = jsonData[0];
+              const firstRow = jsonData[0] as Record<string, unknown>;
               const columnCount = Object.keys(firstRow).length;
               maxColumnCount = Math.max(maxColumnCount, columnCount);
             }
@@ -275,8 +275,8 @@ export class ExcelParserUtils {
             new Error(
               `获取Excel文件信息失败: ${
                 error instanceof Error ? error.message : '未知错误'
-              }`
-            )
+              }`,
+            ),
           );
         }
       };
@@ -308,7 +308,7 @@ export class ExcelParserUtils {
    */
   static async previewExcelFile(
     file: File,
-    previewRows: number = 5
+    previewRows: number = 5,
   ): Promise<{
     headers: string[];
     rows: any[];
@@ -329,7 +329,7 @@ export class ExcelParserUtils {
             return;
           }
 
-          const headers = Object.keys(jsonData[0]);
+          const headers = Object.keys(jsonData[0] as Record<string, unknown>);
           const previewData = jsonData.slice(0, previewRows);
 
           resolve({ headers, rows: previewData });
@@ -338,8 +338,8 @@ export class ExcelParserUtils {
             new Error(
               `Excel文件预览失败: ${
                 error instanceof Error ? error.message : '未知错误'
-              }`
-            )
+              }`,
+            ),
           );
         }
       };

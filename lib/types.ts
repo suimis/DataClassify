@@ -206,3 +206,38 @@ export interface ExportConfig {
   selectedColumns?: string[];
   fileName?: string;
 }
+
+// Page组件使用的ClassificationResult接口
+export interface PageClassificationResult {
+  field: string;
+  meaning: string;
+  classification?: string;
+}
+
+// Page组件使用的DataResults接口
+export interface PageDataResults {
+  type: 'table' | 'markdown';
+  data: PageClassificationResult[] | string;
+}
+
+// ResultDisplay组件使用的ClassificationResult接口
+export interface DisplayClassificationResult {
+  dataSource: string;
+  databaseName: string;
+  tableName: string;
+  field: string;
+  fieldDescription: string;
+  firstLevelCategory: string;
+  secondLevelCategory: string;
+  thirdLevelCategory: string;
+  fourthLevelCategory: string;
+  sensitivityClassification: string;
+  classificationReason: string;
+  taggingMethod: string;
+}
+
+// ResultDisplay组件使用的DataResults接口
+export interface DisplayDataResults {
+  type: 'table' | 'markdown';
+  data: DisplayClassificationResult[] | string;
+}

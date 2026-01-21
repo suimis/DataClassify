@@ -37,10 +37,10 @@ function createModel(config: AIModelConfig): LanguageModel {
       baseURL: config.baseUrl,
     });
 
-    return deepseek(config.modelName);
+    return deepseek(config.modelName) as LanguageModel;
   } else if (config.provider === 'openai') {
     // 使用OpenAI
-    return openai(config.modelName);
+    return openai(config.modelName) as LanguageModel;
   } else {
     throw new Error(`Unsupported provider: ${config.provider}`);
   }
@@ -67,7 +67,7 @@ export class AIService {
       temperature?: number;
       maxTokens?: number;
       systemPrompt?: string;
-    }
+    },
   ) {
     const model = createModel(this.config);
 
@@ -102,7 +102,7 @@ export class AIService {
       temperature?: number;
       maxTokens?: number;
       systemPrompt?: string;
-    }
+    },
   ) {
     const model = createModel(this.config);
 
@@ -175,7 +175,7 @@ export function formatChatMessages(
   messages: Array<{
     sender: 'user' | 'ai';
     content: string;
-  }>
+  }>,
 ): ChatMessage[] {
   return messages.map((msg) => ({
     role: msg.sender === 'user' ? 'user' : 'assistant',

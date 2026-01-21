@@ -5,7 +5,30 @@ import {
 } from './ai-elements/reasoning';
 import { Markdown } from './Markdown';
 
-export default function Message({ message, status, active, last }) {
+interface MessagePart {
+  type: string;
+  text: string;
+}
+
+interface Message {
+  id: string;
+  role: string;
+  parts: MessagePart[];
+}
+
+interface MessageProps {
+  message: Message;
+  status: string;
+  active: boolean;
+  last: string;
+}
+
+export default function Message({
+  message,
+  status,
+  active,
+  last,
+}: MessageProps) {
   return (
     <div key={message.id} className="flex flex-col ml-4 mb-4">
       {status == 'submitted' && message.role == 'assistant' && active && (

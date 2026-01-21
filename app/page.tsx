@@ -2,7 +2,11 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LottieAnimation from '@/components/LottieAnimation';
+import dynamic from 'next/dynamic';
+
+const LottieAnimation = dynamic(() => import('@/components/LottieAnimation'), {
+  ssr: false,
+});
 
 export default function Home() {
   const router = useRouter();

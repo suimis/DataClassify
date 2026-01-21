@@ -23,16 +23,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import LottieAnimation from './LottieAnimation';
-
-interface ClassificationResult {
-  field: string;
-  meaning: string;
-  classification?: string;
-}
+import { DisplayClassificationResult } from '@/lib/types';
 
 interface FileProcessorProps {
   file: File;
-  onProcessComplete: (data: ClassificationResult[]) => void;
+  onProcessComplete: (data: DisplayClassificationResult[]) => void;
   onClearFile: () => void;
 }
 
@@ -77,8 +72,8 @@ export default function FileProcessor({
     hasHeader && fullData.length > 0
       ? fullData[0]
       : fullData.length > 0
-      ? fullData[0].map((_, index) => `列${index + 1}`)
-      : [];
+        ? fullData[0].map((_, index) => `列${index + 1}`)
+        : [];
 
   const handleProcess = () => {
     if (!fieldColumn || !meaningColumn) return;
@@ -91,12 +86,22 @@ export default function FileProcessor({
       const meaningIndex = parseInt(meaningColumn);
       const startRow = hasHeader ? 1 : 0;
 
-      const results: ClassificationResult[] = fullData
+      const results: DisplayClassificationResult[] = fullData
         .slice(startRow)
         .filter((row) => row[fieldIndex] && row[meaningIndex])
         .map((row) => ({
+          dataSource: '上传文件',
+          databaseName: '未知',
+          tableName: '未知',
           field: row[fieldIndex] || '',
-          meaning: row[meaningIndex] || '',
+          fieldDescription: row[meaningIndex] || '',
+          firstLevelCategory: '待分类',
+          secondLevelCategory: '待分类',
+          thirdLevelCategory: '待分类',
+          fourthLevelCategory: '待分类',
+          sensitivityClassification: '待评估',
+          taggingMethod: 'AI自动识别',
+          classificationReason: '等待AI处理',
         }));
 
       setIsProcessing(false);

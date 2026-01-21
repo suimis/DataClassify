@@ -46,24 +46,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import * as XLSX from 'xlsx';
-
-interface ClassificationResult {
-  dataSource: string;
-  databaseName: string;
-  tableName: string;
-  field: string;
-  fieldDescription: string;
-  firstLevelCategory: string;
-  secondLevelCategory: string;
-  thirdLevelCategory: string;
-  fourthLevelCategory: string;
-  sensitivityClassification: string;
-  taggingMethod: string;
-  classificationReason: string;
-}
+import { DisplayClassificationResult } from '@/lib/types';
 
 interface DataTableProps {
-  data: ClassificationResult[];
+  data: DisplayClassificationResult[];
   onRefresh?: () => void;
   isLoading?: boolean;
 }
@@ -78,7 +64,7 @@ export default function DataTable({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] =
-    useState<ClassificationResult[]>(data);
+    useState<DisplayClassificationResult[]>(data);
   const [pageSize, setPageSize] = useState(10);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -99,7 +85,7 @@ export default function DataTable({
     return result;
   }, [filteredData, searchTerm]);
 
-  const columns: ColumnDef<ClassificationResult>[] = [
+  const columns: ColumnDef<DisplayClassificationResult>[] = [
     {
       accessorKey: 'dataSource',
       header: ({ column }) => {
@@ -498,7 +484,7 @@ export default function DataTable({
           />
           <AdvancedFilter
             data={data}
-            onFilterChange={(filteredData: ClassificationResult[]) => {
+            onFilterChange={(filteredData: DisplayClassificationResult[]) => {
               setFilteredData(filteredData);
             }}
           />

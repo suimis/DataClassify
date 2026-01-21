@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ResultDisplay from '@/components/ResultDisplay';
-import LottieAnimation from '@/components/LottieAnimation';
+import dynamic from 'next/dynamic';
+
+const LottieAnimation = dynamic(() => import('@/components/LottieAnimation'), {
+  ssr: false,
+});
 
 interface MockApiDataItem {
   table_name: string;

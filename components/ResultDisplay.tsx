@@ -6,29 +6,10 @@ import { Download } from 'lucide-react'; // Add Download icon
 import ExcelViewer from './ExcelViewer';
 import { Markdown } from './Markdown';
 import DataTable from './DataTable';
-
-interface ClassificationResult {
-  dataSource: string;
-  databaseName: string;
-  tableName: string;
-  field: string;
-  fieldDescription: string;
-  firstLevelCategory: string;
-  secondLevelCategory: string;
-  thirdLevelCategory: string;
-  fourthLevelCategory: string;
-  sensitivityClassification: string;
-  classificationReason: string;
-  taggingMethod: string;
-}
-
-interface DataResults {
-  type: 'table' | 'markdown';
-  data: ClassificationResult[] | string;
-}
+import { DisplayClassificationResult, DisplayDataResults } from '@/lib/types';
 
 interface ResultDisplayProps {
-  results: DataResults;
+  results: DisplayDataResults;
   onClearResult: () => void;
   onRefresh?: () => void;
   isLoading?: boolean;
@@ -62,7 +43,7 @@ export default function ResultDisplay({
         <div className="flex-grow overflow-auto h-full">
           {results.type === 'table' ? (
             <DataTable
-              data={results.data as ClassificationResult[]}
+              data={results.data as DisplayClassificationResult[]}
               onRefresh={onRefresh}
               isLoading={isLoading}
             />
