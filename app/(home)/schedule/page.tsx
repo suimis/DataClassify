@@ -184,19 +184,35 @@ export default function Page() {
     { status: '未分类', value: 300, fill: 'var(--color-unClassification)' },
   ];
 
+  const sensitiveFieldData = [
+    { status: '敏感字段', value: 25, fill: 'var(--color-chart-2)' },
+    { status: '非敏感字段', value: 75, fill: 'var(--color-unClassification)' },
+  ];
+
   // 计算成功任务的占比
   const totalTasks = chartData.reduce((acc, curr) => acc + curr.value, 0);
   const totalClassifyTasks = classifyCoverData.reduce(
     (acc, curr) => acc + curr.value,
     0,
   );
+  const totalSensitiveFields = sensitiveFieldData.reduce(
+    (acc, curr) => acc + curr.value,
+    0,
+  );
+
   const successValue =
     chartData.find((item) => item.status === '成功')?.value || 0;
   const successClassifyValue =
     classifyCoverData.find((item) => item.status === '已分类')?.value || 0;
+  const successSensitiveValue =
+    sensitiveFieldData.find((item) => item.status === '敏感字段')?.value || 0;
+
   const successPercentage = Math.round((successValue / totalTasks) * 100);
   const successClassifyPercentage = Math.round(
     (successClassifyValue / totalClassifyTasks) * 100,
+  );
+  const successSensitivePercentage = Math.round(
+    (successSensitiveValue / totalSensitiveFields) * 100,
   );
 
   const chartConfig = {
@@ -356,36 +372,21 @@ export default function Page() {
           <div className="flex flex-col gap-2.5 mr-8 flex-1.1">
             <div className="flex gap-1.5">
               <Database className="text-blue-400" />
-              <span className="font-medium text-[1rem]">已分类字段</span>
+              <span className="font-medium text-[1rem]">敏感字段统计</span>
             </div>
-            <span className="text-3xl font-semibold">5</span>
+            <span className="text-3xl font-semibold">
+              {successSensitiveValue}
+            </span>
           </div>
-          <div className="flex gap-1 flex-2 h-full">
-            <div className="space-y-1 flex-1 flex flex-col justify-center">
-              <div className="flex gap-2 items-center">
-                <span className="rounded-full size-2 bg-green-300"></span>
-                <span className="text-[0.8rem] text-black/60">成功</span>
-                <span className="text-[0.8rem] font-medium">1</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="rounded-full size-2 bg-amber-300"></span>
-                <span className="text-[0.8rem] text-black/60">中止</span>
-                <span className="text-[0.8rem] font-medium">2</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="rounded-full size-2 bg-red-400"></span>
-                <span className="text-[0.8rem] text-black/60">失败</span>
-                <span className="text-[0.8rem] font-medium">100</span>
-              </div>
-            </div>
-            <ChartContainer config={chartConfig} className="w-28">
+          <div className="flex gap-1 flex-2 w-full h-full">
+            <ChartContainer config={chartConfig} className="w-28 ml-auto">
               <PieChart>
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
                 />
                 <Pie
-                  data={chartData}
+                  data={sensitiveFieldData}
                   dataKey="value"
                   nameKey="status"
                   innerRadius={44}
@@ -407,7 +408,7 @@ export default function Page() {
                               y={viewBox.cy}
                               className="fill-foreground text-xl font-bold"
                             >
-                              {successPercentage}%
+                              {successSensitivePercentage}%
                             </tspan>
                           </text>
                         );
