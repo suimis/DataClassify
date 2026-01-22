@@ -93,7 +93,7 @@ importers:
         specifier: ^1.2.4
         version: 1.2.6(@types/react-dom@19.1.7(@types/react@19.1.10))(@types/react@19.1.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-tabs':
-        specifier: ^1.1.11
+        specifier: ^1.1.13
         version: 1.1.13(@types/react-dom@19.1.7(@types/react@19.1.10))(@types/react@19.1.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-toggle':
         specifier: ^1.1.8
@@ -146,6 +146,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.17.1)(postgres@3.4.8)
+      drizzle-zod:
+        specifier: ^0.8.3
+        version: 0.8.3(drizzle-orm@0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.17.1)(postgres@3.4.8))(zod@3.25.76)
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.1.0)
@@ -3549,6 +3552,12 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-zod@0.8.3:
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -9390,6 +9399,11 @@ snapshots:
       '@types/pg': 8.16.0
       pg: 8.17.1
       postgres: 3.4.8
+
+  drizzle-zod@0.8.3(drizzle-orm@0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.17.1)(postgres@3.4.8))(zod@3.25.76):
+    dependencies:
+      drizzle-orm: 0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.17.1)(postgres@3.4.8)
+      zod: 3.25.76
 
   dunder-proto@1.0.1:
     dependencies:
