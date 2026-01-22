@@ -39,6 +39,9 @@ import {
   Database,
   HardDrive,
   Heart,
+  Table2Icon,
+  Columns2,
+  Library,
 } from 'lucide-react';
 import { ClipboardList, Search } from 'lucide-react';
 import { Label, Pie, PieChart } from 'recharts';
@@ -53,6 +56,14 @@ import {
   FieldTitle,
 } from '@/components/ui/field';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // 任务数据类型
 type Task = {
@@ -132,6 +143,8 @@ export default function Page() {
   // 排序状态
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  // 分类级别选中状态
+  const [selectedLevel, setSelectedLevel] = useState('library');
 
   // 排序数据
   const sortedTasks = useMemo(() => {
@@ -256,52 +269,281 @@ export default function Page() {
               </Button>
             </DrawerTrigger>
             <DrawerContent className="min-w-[75%]!">
-              <DrawerHeader>
+              <DrawerHeader className="border border-b">
                 <DrawerTitle>新建任务</DrawerTitle>
               </DrawerHeader>
-              <div className="no-scrollbar overflow-y-auto px-4">
-                <form>
-                  <FieldSet>
-                    <FieldGroup>
-                      <FieldLegend>选择应该在哪个元素上执行测试</FieldLegend>
-                      <RadioGroup
-                        defaultValue="plus"
-                        className="max-w-2xl flex"
-                      >
-                        <FieldLabel htmlFor="table-class">
-                          <Field orientation="horizontal">
-                            <FieldContent>
-                              <FieldTitle>表级别</FieldTitle>
-                              <FieldDescription>
-                                对整个表所有列进行分类.
-                              </FieldDescription>
-                            </FieldContent>
-                            <RadioGroupItem value="table" id="table-class" />
-                          </Field>
-                        </FieldLabel>
-                        <FieldLabel htmlFor="column-class">
-                          <Field orientation="horizontal">
-                            <FieldContent>
-                              <FieldTitle>列级别</FieldTitle>
-                              <FieldDescription>
-                                对某一列进行分类.
-                              </FieldDescription>
-                            </FieldContent>
-                            <RadioGroupItem value="column" id="column-class" />
-                          </Field>
-                        </FieldLabel>
-                      </RadioGroup>
-                    </FieldGroup>
-                  </FieldSet>
-                </form>
+              <div className="flex w-full h-full">
+                <div className="no-scrollbar overflow-y-auto pl-10 pt-8 flex-2">
+                  <form>
+                    <FieldSet>
+                      <FieldGroup>
+                        <RadioGroup
+                          defaultValue="table"
+                          value={selectedLevel}
+                          onValueChange={setSelectedLevel}
+                          className="max-w-2xl flex flex-col cursor-po"
+                        >
+                          <div className="text-[0.9rem] text-black/80 after:rounded-full after:content-['*'] after:text-red-600 after:ml-0.5">
+                            选择应该在哪个元素上执行测试
+                          </div>
+                          <div className="flex gap-3">
+                            <FieldLabel htmlFor="library-class">
+                              <Field orientation="horizontal">
+                                <FieldContent className="cursor-pointer">
+                                  <FieldTitle className="flex items-center gap-2">
+                                    <Library
+                                      className={
+                                        selectedLevel === 'library'
+                                          ? 'text-blue-600'
+                                          : ''
+                                      }
+                                    />
+                                    <span
+                                      className={`${selectedLevel === 'library' ? 'text-blue-800' : ''}`}
+                                    >
+                                      库级别
+                                    </span>
+                                  </FieldTitle>
+                                  <FieldDescription
+                                    className={
+                                      selectedLevel === 'library'
+                                        ? 'text-blue-500'
+                                        : ''
+                                    }
+                                  >
+                                    对整个库所有表的列进行分类.
+                                  </FieldDescription>
+                                </FieldContent>
+                                <RadioGroupItem
+                                  value="library"
+                                  id="library-class"
+                                />
+                              </Field>
+                            </FieldLabel>
+                            <FieldLabel htmlFor="table-class">
+                              <Field orientation="horizontal">
+                                <FieldContent className="cursor-pointer">
+                                  <FieldTitle className="flex items-center gap-2">
+                                    <Table2Icon
+                                      className={
+                                        selectedLevel === 'table'
+                                          ? 'text-blue-600'
+                                          : ''
+                                      }
+                                    />
+                                    <span
+                                      className={`${selectedLevel === 'table' ? 'text-blue-800' : ''}`}
+                                    >
+                                      表级别
+                                    </span>
+                                  </FieldTitle>
+                                  <FieldDescription
+                                    className={
+                                      selectedLevel === 'table'
+                                        ? 'text-blue-500'
+                                        : ''
+                                    }
+                                  >
+                                    对整个表所有列进行分类.
+                                  </FieldDescription>
+                                </FieldContent>
+                                <RadioGroupItem
+                                  value="table"
+                                  id="table-class"
+                                />
+                              </Field>
+                            </FieldLabel>
+                            <FieldLabel htmlFor="column-class">
+                              <Field orientation="horizontal">
+                                <FieldContent className="cursor-pointer">
+                                  <FieldTitle
+                                    className={`flex items-center gap-2`}
+                                  >
+                                    <Columns2
+                                      className={
+                                        selectedLevel === 'column'
+                                          ? 'text-blue-600'
+                                          : ''
+                                      }
+                                    />
+                                    <span
+                                      className={`${selectedLevel === 'column' ? 'text-blue-800' : ''}`}
+                                    >
+                                      列级别
+                                    </span>
+                                  </FieldTitle>
+                                  <FieldDescription
+                                    className={
+                                      selectedLevel === 'column'
+                                        ? 'text-blue-500'
+                                        : ''
+                                    }
+                                  >
+                                    对某一列进行分类.
+                                  </FieldDescription>
+                                </FieldContent>
+                                <RadioGroupItem
+                                  value="column"
+                                  id="column-class"
+                                />
+                              </Field>
+                            </FieldLabel>
+                          </div>
+                        </RadioGroup>
+                        <div className="flex flex-col gap-2">
+                          <div className="text-[0.9rem] text-black/80 after:rounded-full after:content-['*'] after:text-red-600 after:ml-0.5">
+                            选择数据表
+                          </div>
+                          <Select>
+                            <SelectTrigger
+                              className="w-full max-w-2xl"
+                              aria-invalid
+                            >
+                              <SelectValue placeholder="选择数据表" />
+                            </SelectTrigger>
+                            <SelectContent className="w-full">
+                              <SelectGroup>
+                                <SelectItem value="daily_summary">
+                                  daily_summary
+                                </SelectItem>
+                                <SelectItem value="daily_summary_filter">
+                                  daily_summary_filter
+                                </SelectItem>
+                                <SelectItem value="acct_vars">
+                                  acct_vars
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <div className="text-[0.9rem] text-black/80 after:rounded-full after:content-['*'] after:text-red-600 after:ml-0.5">
+                            分类分级类型
+                          </div>
+                          <Select>
+                            <SelectTrigger
+                              className="w-full max-w-2xl"
+                              aria-invalid
+                            >
+                              <SelectValue placeholder="选择分类分级类型" />
+                            </SelectTrigger>
+                            <SelectContent className="w-full">
+                              <SelectGroup>
+                                <SelectItem value="full-classify">
+                                  全量打标
+                                </SelectItem>
+                                <SelectItem value="plus-classify">
+                                  增量打标
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <div className="text-[0.9rem] text-black/80 after:rounded-full">
+                            任务名称
+                          </div>
+                          <Input
+                            className="mb-1 max-w-2xl"
+                            id="task-name"
+                            type="text"
+                            placeholder="请输入任务名称"
+                          />
+                        </div>
+                      </FieldGroup>
+                    </FieldSet>
+                  </form>
+                </div>
+                <div className="no-scrollbar overflow-y-auto px-10 pt-8 flex-1 h-[93%] border border-neutral-300/70 rounded-md mt-8 mr-12">
+                  {/* 说明文档markdown */}
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        新建分类分级任务说明
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        通过配置任务参数，对数据库中的数据进行自动分类和敏感字段识别。
+                      </p>
+                    </div>
+
+                    <div className="border-l-2 border-blue-500 pl-4">
+                      <h4 className="text-base font-medium text-gray-800 mb-2">
+                        任务配置说明
+                      </h4>
+                      <div className="space-y-3 text-sm text-gray-600">
+                        <div>
+                          <strong className="text-gray-700">
+                            1. 选择分类级别
+                          </strong>
+                          <ul className="mt-1 ml-4 space-y-1 list-disc">
+                            <li>
+                              <strong>库级别</strong>
+                              ：对整个数据库中所有表的所有列进行分类分级处理
+                            </li>
+                            <li>
+                              <strong>表级别</strong>
+                              ：对指定表的所有列进行分类分级处理
+                            </li>
+                            <li>
+                              <strong>列级别</strong>
+                              ：对指定表的特定列进行分类分级处理
+                            </li>
+                          </ul>
+                        </div>
+                        <div>
+                          <strong className="text-gray-700">
+                            2. 选择数据表
+                          </strong>
+                          <p className="mt-1">
+                            从下拉列表中选择需要处理的数据表，支持选择数据库中的表（如
+                            daily_summary、daily_summary_filter、acct_vars）
+                          </p>
+                        </div>
+                        <div>
+                          <strong className="text-gray-700">
+                            3. 分类分类类型
+                          </strong>
+                          <ul className="mt-1 ml-4 space-y-1 list-disc">
+                            <li>
+                              <strong>全量打标</strong>
+                              ：对选定范围内的所有数据进行重新分类和标签标记
+                            </li>
+                            <li>
+                              <strong>增量打标</strong>
+                              ：仅对新增或变更的数据进行分类和标签标记
+                            </li>
+                          </ul>
+                        </div>
+                        <div>
+                          <strong className="text-gray-700">4. 任务名称</strong>
+                          <p className="mt-1">
+                            可选字段，用于标识和区分不同的任务。建议使用有意义的名称，如"用户数据分类-20260122"
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+              <DrawerFooter className="border border-t pt-3">
+                <div className="flex ">
+                  <div className="ml-auto flex gap-3">
+                    <DrawerClose>
+                      <Button variant="outline">取消</Button>
+                    </DrawerClose>
+                    <Button>新建</Button>
+                  </div>
+                </div>
+              </DrawerFooter>
             </DrawerContent>
           </Drawer>
         </span>
       </section>
 
-      <section className="mx-4 mt-2 flex justify-between">
-        <div className="w-96 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
+      <section className="mx-4 mt-2 flex justify-between gap-4">
+        <div className="flex-1 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
           <div className="flex flex-col gap-2.5 mr-8 flex-1">
             <div className="flex gap-1.5">
               <ClipboardList className="text-blue-400" />
@@ -368,7 +610,7 @@ export default function Page() {
             </ChartContainer>
           </div>
         </div>
-        <div className="w-96 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
+        <div className="flex-1 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
           <div className="flex flex-col gap-2.5 mr-8 flex-1.1">
             <div className="flex gap-1.5">
               <Database className="text-blue-400" />
@@ -420,7 +662,7 @@ export default function Page() {
             </ChartContainer>
           </div>
         </div>
-        <div className="w-96 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
+        <div className="flex-1 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
           <div className="flex flex-col h-full pt-5 gap-2.5 mr-8">
             <div className="flex gap-1.5">
               <Heart className="text-green-400" />

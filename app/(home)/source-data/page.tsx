@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ResultDisplay from '@/components/ResultDisplay';
@@ -10,7 +10,8 @@ const LottieAnimation = dynamic(() => import('@/components/LottieAnimation'), {
   ssr: false,
 });
 
-interface MockApiDataItem {
+// API 返回的数据类型
+interface SourceDataItem {
   table_name: string;
   field_name: string;
   field_desc: string;
@@ -21,6 +22,7 @@ interface MockApiDataItem {
   sensitivity_level: string;
 }
 
+// 转换后的展示数据类型
 interface TransformedDataItem {
   dataSource: string;
   databaseName: string;
@@ -36,6 +38,12 @@ interface TransformedDataItem {
   taggingMethod: string;
 }
 
+// API 响应类型
+interface ApiResponse {
+  data: SourceDataItem[];
+  source: 'mock' | 'api';
+}
+
 export default function SourceDataPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,113 +52,9 @@ export default function SourceDataPage() {
     data: TransformedDataItem[];
   } | null>(null);
 
-  // 模拟API数据
-  const mockApiData: MockApiDataItem[] = [
-    {
-      table_name: 'daily_summary',
-      field_name: 'mchnt_cd',
-      field_desc: '商户代码',
-      level1: '业务数据',
-      level2: '基础信息',
-      level3: '单位基础信息',
-      level4: '单位入网信息',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'mchnt_tp',
-      field_desc: '商户类型',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '商户衍生信息',
-      level4: '商户标签',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'pri_acct_no_conv',
-      field_desc: '加密卡号',
-      level1: '业务数据',
-      level2: '基础信息',
-      level3: '个人基础信息',
-      level4: '个人银行卡信息',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'acpt_ins_id_cd',
-      field_desc: '受理机构标识码',
-      level1: '业务数据',
-      level2: '基础信息',
-      level3: '单位基础信息',
-      level4: '单位入网信息',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'acq_ins_id_cd',
-      field_desc: '收单机构标识码',
-      level1: '业务数据',
-      level2: '基础信息',
-      level3: '单位基础信息',
-      level4: '单位入网信息',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'afternoon_amt_sum',
-      field_desc: '汇总-下午交易金额(12-17点)',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '个人衍生信息',
-      level4: '个人金额笔数类',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'afternoon_cnt_sum',
-      field_desc: '汇总-下午交易笔数(12-17点)',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '个人衍生信息',
-      level4: '个人金额笔数类',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'amt_max',
-      field_desc: '清算交易金额最大值',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '个人衍生信息',
-      level4: '个人金额笔数类',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'amt_min',
-      field_desc: '清算交易金额最小值',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '个人衍生信息',
-      level4: '个人金额笔数类',
-      sensitivity_level: 'C',
-    },
-    {
-      table_name: 'daily_summary',
-      field_name: 'amt_sum',
-      field_desc: '清算交易金额求和',
-      level1: '业务数据',
-      level2: '衍生信息',
-      level3: '个人衍生信息',
-      level4: '个人金额笔数类',
-      sensitivity_level: 'C',
-    },
-  ];
-
-  // 数据转换函数
+  // 数据转换函数：将 API 返回的数据转换为展示所需格式
   const transformApiData = (
-    apiData: MockApiDataItem[],
+    apiData: SourceDataItem[],
   ): TransformedDataItem[] => {
     return apiData.map((item) => ({
       dataSource: 'hive',
@@ -168,22 +72,35 @@ export default function SourceDataPage() {
     }));
   };
 
-  // 模拟API请求
-  const fetchSourceData = () => {
+  // 从 API 获取源数据
+  const fetchSourceData = async () => {
     setLoading(true);
     setError(null);
 
-    // 模拟网络请求延迟
-    setTimeout(() => {
-      try {
-        const transformedData = transformApiData(mockApiData);
-        setResults({ type: 'table', data: transformedData });
-        setLoading(false);
-      } catch {
-        setError('加载数据失败，请重试');
-        setLoading(false);
+    try {
+      // 调用 Next.js API Route
+      const response = await fetch('/api/source-data', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '获取数据失败');
       }
-    }, 1000);
+
+      const apiResponse: ApiResponse = await response.json();
+      const transformedData = transformApiData(apiResponse.data);
+
+      setResults({ type: 'table', data: transformedData });
+    } catch (err) {
+      console.error('获取源数据失败:', err);
+      setError(err instanceof Error ? err.message : '加载数据失败，请重试');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 刷新数据

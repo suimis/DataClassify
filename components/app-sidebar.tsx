@@ -1,5 +1,12 @@
 'use client';
-import { MessageCircle, Settings, Shapes, Usb, ListMinus } from 'lucide-react';
+import {
+  MessageCircle,
+  Settings,
+  Shapes,
+  Usb,
+  ListMinus,
+  Tags,
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -23,25 +30,24 @@ const items = [
     icon: MessageCircle,
   },
   {
-    title: '分类分级任务',
-    url: '/schedule',
-    icon: ListMinus,
-  },
-  {
     title: '元数据管理',
     url: '/source-data',
     icon: Usb,
   },
   {
+    title: '分类分级标签',
+    url: '/tags',
+    icon: Tags,
+  },
+  {
+    title: '分类分级任务',
+    url: '/schedule',
+    icon: ListMinus,
+  },
+  {
     title: '分类分级统计',
     url: '/statistics',
     icon: Shapes,
-  },
-
-  {
-    title: '设置',
-    url: '/settings',
-    icon: Settings,
   },
 ];
 
