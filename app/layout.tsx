@@ -25,27 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body>
-        <SidebarProvider>
-          <div className="h-dvh w-full flex">
-            {/* 左侧菜单栏 */}
-            <AppSidebar />
-            {/* 主内容区域 */}
-            <SidebarInset>
-              <main className="h-dvh">
-                <header>
-                  <div className="absolute top-4 left-4 z-50"></div>
-                </header>
-
-                {/* 路由内容 */}
-                <div className="flex flex-1 h-full overflow-y-auto">
-                  {children}
-                </div>
-              </main>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
