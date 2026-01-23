@@ -812,18 +812,18 @@ export default function Page() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid grid-cols-6 gap-5 pt-2 pb-2 px-8 w-full">
+                  <div className="grid grid-cols-6 gap-5 pt-2 pb-2 px-5 w-full">
                     {/* 任务进度 */}
                     <div className="col-span-2 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-700">
                           任务进度
                         </span>
-                        <span className="text-sm text-gray-600">
-                          {task.labeled_fields} / {task.total_fields} 字段
-                        </span>
                       </div>
-                      <Progress value={progress} className="h-3" />
+                      <Progress value={progress} className="h-3 w-[80%]" />
+                      <span className="text-sm text-gray-600">
+                        {task.labeled_fields} / {task.total_fields} 字段
+                      </span>
                     </div>
 
                     {/* 已打标字段数 */}
@@ -855,11 +855,11 @@ export default function Page() {
                     </div>
 
                     {/* 状态 */}
-                    <div className="flex flex-col gap-1">
+                    <div className="space-y-1">
                       <span className="text-sm text-gray-500">状态</span>
                       <div>
                         <span
-                          className={`rounded-xl py-1 px-2 text-[0.9rem] ${getStatusBadgeVariant(task.status)}`}
+                          className={`rounded-xl py-0.5 px-2 text-[0.8rem] ${getStatusBadgeVariant(task.status)}`}
                         >
                           {task.status}
                         </span>

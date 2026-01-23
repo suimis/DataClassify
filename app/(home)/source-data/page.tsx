@@ -165,7 +165,7 @@ export default function SourceDataPage() {
 
           {/* 结果展示区域 */}
           {results && (
-            <div className="mb-6 w-full h-full max-w-6xl">
+            <div className="w-full h-full max-w-7xl">
               <ResultDisplay
                 results={results}
                 onClearResult={handleClearResults}
