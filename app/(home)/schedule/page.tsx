@@ -272,7 +272,7 @@ export default function Page() {
               <DrawerHeader className="border border-b">
                 <DrawerTitle>新建任务</DrawerTitle>
               </DrawerHeader>
-              <div className="flex w-full h-full">
+              <div className="flex w-full h-full gap-4">
                 <div className="no-scrollbar overflow-y-auto pl-10 pt-8 flex-2">
                   <form>
                     <FieldSet>
@@ -456,7 +456,6 @@ export default function Page() {
                   </form>
                 </div>
                 <div className="no-scrollbar overflow-y-auto px-10 pt-8 flex-1 h-[93%] border border-neutral-300/70 rounded-md mt-8 mr-12">
-                  {/* 说明文档markdown */}
                   <div className="flex flex-col gap-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -662,6 +661,7 @@ export default function Page() {
             </ChartContainer>
           </div>
         </div>
+
         <div className="flex-1 h-38 flex items-center rounded-md bg-sidebar p-5 border border-neutral-200/50">
           <div className="flex flex-col h-full pt-5 gap-2.5 mr-8">
             <div className="flex gap-1.5">

@@ -1,12 +1,10 @@
 export default function Page() {
   return (
-    <div className="flex-1 flex flex-col h-full">
-      {/* 页面标题 */}
-      <div className="px-6 py-2 border-b flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800/90">分类分级标签</h1>
-        </div>
-      </div>
+    <div className="p-5 h-full">
+      <section className="p-3 rounded-md flex flex-col justify-between bg-sidebar border border-neutral-200/50 h-[95%] w-65">
+        <span className="font-medium text-[0.9rem]">分类</span>
+        <div className="h-">123</div>
+      </section>
     </div>
   );
 }

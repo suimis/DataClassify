@@ -64,7 +64,7 @@ export function AppSidebar() {
     return pathname?.startsWith(url);
   };
   return (
-    <Sidebar collapsible="icon" className="transition-all">
+    <Sidebar collapsible="icon" className="transition-all z-20000">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
