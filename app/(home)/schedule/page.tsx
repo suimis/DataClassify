@@ -80,6 +80,7 @@ type Task = {
   database: string;
   table: string;
   labeled_fields: number; // 已打标字段数
+  failed_fields: number; // 失败字段个数
   total_fields: number; // 总字段数
 };
 
@@ -96,6 +97,7 @@ const tasks: Task[] = [
     database: 'user_db',
     table: 'users',
     labeled_fields: 12,
+    failed_fields: 1,
     total_fields: 15,
   },
   {
@@ -105,6 +107,7 @@ const tasks: Task[] = [
     database: 'order_db',
     table: 'orders',
     labeled_fields: 8,
+    failed_fields: 0,
     total_fields: 12,
   },
   {
@@ -114,6 +117,7 @@ const tasks: Task[] = [
     database: 'product_db',
     table: 'products',
     labeled_fields: 5,
+    failed_fields: 2,
     total_fields: 20,
   },
   {
@@ -123,6 +127,7 @@ const tasks: Task[] = [
     database: 'user_db',
     table: 'profiles',
     labeled_fields: 4,
+    failed_fields: 0,
     total_fields: 8,
   },
   {
@@ -132,6 +137,7 @@ const tasks: Task[] = [
     database: 'log_db',
     table: 'system_logs',
     labeled_fields: 6,
+    failed_fields: 0,
     total_fields: 6,
   },
 ];
@@ -812,7 +818,7 @@ export default function Page() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid grid-cols-6 gap-5 pt-2 pb-2 px-5 w-full">
+                  <div className="grid grid-cols-5 gap-2 pt-2 pb-2 px-5 w-full">
                     {/* 任务进度 */}
                     <div className="col-span-2 space-y-2">
                       <div className="flex items-center justify-between">
@@ -822,7 +828,8 @@ export default function Page() {
                       </div>
                       <Progress value={progress} className="h-3 w-[80%]" />
                       <span className="text-sm text-gray-600">
-                        {task.labeled_fields} / {task.total_fields} 字段
+                        {task.labeled_fields + task.failed_fields} /&nbsp;
+                        {task.total_fields} 字段
                       </span>
                     </div>
 
@@ -836,6 +843,16 @@ export default function Page() {
                       </div>
                     </div>
 
+                    {/* 失败字段数 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">
+                        失败字段个数
+                      </span>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {task.failed_fields}
+                      </div>
+                    </div>
+
                     {/* 总打标字段数 */}
                     <div className="space-y-1">
                       <span className="text-sm text-gray-500">
@@ -845,15 +862,21 @@ export default function Page() {
                         {task.total_fields}
                       </div>
                     </div>
-
-                    {/* 任务ID */}
+                    {/* 数据库 */}
                     <div className="space-y-1">
-                      <span className="text-sm text-gray-500">任务ID</span>
+                      <span className="text-sm text-gray-500">数据库</span>
                       <div className="font-medium text-gray-900">
-                        {task.task_id}
+                        {task.database}
                       </div>
                     </div>
 
+                    {/* 数据表 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">数据表</span>
+                      <div className="font-medium text-gray-900">
+                        {task.table}
+                      </div>
+                    </div>
                     {/* 状态 */}
                     <div className="space-y-1">
                       <span className="text-sm text-gray-500">状态</span>
@@ -873,22 +896,6 @@ export default function Page() {
                       </span>
                       <div className="font-medium text-gray-900">
                         {task.last_run}
-                      </div>
-                    </div>
-
-                    {/* 数据库 */}
-                    <div className="space-y-1">
-                      <span className="text-sm text-gray-500">数据库</span>
-                      <div className="font-medium text-gray-900">
-                        {task.database}
-                      </div>
-                    </div>
-
-                    {/* 数据表 */}
-                    <div className="space-y-1">
-                      <span className="text-sm text-gray-500">数据表</span>
-                      <div className="font-medium text-gray-900">
-                        {task.table}
                       </div>
                     </div>
                   </div>
