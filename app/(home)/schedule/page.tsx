@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   Drawer,
   DrawerClose,
@@ -18,6 +19,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import {
   InputGroup,
@@ -72,7 +79,8 @@ type Task = {
   last_run: string;
   database: string;
   table: string;
-  field_count: number;
+  labeled_fields: number; // 已打标字段数
+  total_fields: number; // 总字段数
 };
 
 // 排序类型
@@ -87,7 +95,8 @@ const tasks: Task[] = [
     last_run: '2026-01-22 10:30:00',
     database: 'user_db',
     table: 'users',
-    field_count: 15,
+    labeled_fields: 12,
+    total_fields: 15,
   },
   {
     task_id: 'TASK-002',
@@ -95,7 +104,8 @@ const tasks: Task[] = [
     last_run: '2026-01-22 10:25:00',
     database: 'order_db',
     table: 'orders',
-    field_count: 12,
+    labeled_fields: 8,
+    total_fields: 12,
   },
   {
     task_id: 'TASK-003',
@@ -103,7 +113,8 @@ const tasks: Task[] = [
     last_run: '2026-01-22 10:20:00',
     database: 'product_db',
     table: 'products',
-    field_count: 20,
+    labeled_fields: 5,
+    total_fields: 20,
   },
   {
     task_id: 'TASK-004',
@@ -111,7 +122,8 @@ const tasks: Task[] = [
     last_run: '2026-01-22 10:15:00',
     database: 'user_db',
     table: 'profiles',
-    field_count: 8,
+    labeled_fields: 4,
+    total_fields: 8,
   },
   {
     task_id: 'TASK-005',
@@ -119,7 +131,8 @@ const tasks: Task[] = [
     last_run: '2026-01-22 10:10:00',
     database: 'log_db',
     table: 'system_logs',
-    field_count: 6,
+    labeled_fields: 6,
+    total_fields: 6,
   },
 ];
 
@@ -735,84 +748,155 @@ export default function Page() {
       </section>
 
       <section className="m-4 rounded-md bg-sidebar border border-neutral-200/50">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('task_id')}
+        {/* 表头 */}
+        <div className="grid grid-cols-6 gap-4 px-4 py-2 border-b bg-muted/30">
+          <div className="text-sm font-medium text-gray-700">任务ID</div>
+          <div className="text-sm font-medium text-gray-700">状态</div>
+          <div className="text-sm font-medium text-gray-700">数据库</div>
+          <div className="text-sm font-medium text-gray-700">数据表</div>
+          <div className="col-span-2 text-sm font-medium text-gray-700">
+            任务进度
+          </div>
+        </div>
+
+        <Accordion type="single" collapsible className="w-full">
+          {sortedTasks.map((task) => {
+            const progress = Math.round(
+              (task.labeled_fields / task.total_fields) * 100,
+            );
+            return (
+              <AccordionItem
+                key={task.task_id}
+                value={task.task_id}
+                className="border-b last:border-0"
               >
-                <div className="flex items-center">
-                  任务ID
-                  {getSortIcon('task_id')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('status')}
-              >
-                <div className="flex items-center">
-                  状态
-                  {getSortIcon('status')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('last_run')}
-              >
-                <div className="flex items-center">
-                  最近运行
-                  {getSortIcon('last_run')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('database')}
-              >
-                <div className="flex items-center">
-                  数据库
-                  {getSortIcon('database')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('table')}
-              >
-                <div className="flex items-center">
-                  数据表
-                  {getSortIcon('table')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('field_count')}
-              >
-                <div className="flex items-center">
-                  字段数
-                  {getSortIcon('field_count')}
-                </div>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedTasks.map((task) => (
-              <TableRow key={task.task_id}>
-                <TableCell>{task.task_id}</TableCell>
-                <TableCell>
-                  <span
-                    className={`rounded-xl py-1 px-2 text-[0.9rem] ${getStatusBadgeVariant(task.status)}`}
-                  >
-                    {task.status}
-                  </span>
-                </TableCell>
-                <TableCell>{task.last_run}</TableCell>
-                <TableCell>{task.database}</TableCell>
-                <TableCell>{task.table}</TableCell>
-                <TableCell>{task.field_count}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                <AccordionTrigger className="hover:no-underline py-1.5 pr-2 pl-5">
+                  <div className="grid grid-cols-6 gap-4 w-full text-left items-center pr-4">
+                    {/* 任务ID */}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-900">
+                        {task.task_id}
+                      </span>
+                    </div>
+
+                    {/* 状态 */}
+                    <div className="flex items-center">
+                      <span
+                        className={`rounded-xl py-0.5 px-2 text-[0.8rem] ${getStatusBadgeVariant(task.status)}`}
+                      >
+                        {task.status}
+                      </span>
+                    </div>
+
+                    {/* 数据库 */}
+                    <div className="flex flex-col pl-3">
+                      <span className="text-sm text-gray-700">
+                        {task.database}
+                      </span>
+                    </div>
+
+                    {/* 数据表 */}
+                    <div className="flex flex-col pl-4.5">
+                      <span className="text-sm text-gray-700">
+                        {task.table}
+                      </span>
+                    </div>
+
+                    {/* 进度条 */}
+                    <div className="col-span-2 flex items-center gap-3 pl-6">
+                      <Progress value={progress} className="w-[80%] h-2" />
+                      <span className="text-sm font-medium text-gray-600 min-w-[3rem] text-right">
+                        {progress}%
+                      </span>
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-6 gap-5 pt-2 pb-2 px-8 w-full">
+                    {/* 任务进度 */}
+                    <div className="col-span-2 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          任务进度
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {task.labeled_fields} / {task.total_fields} 字段
+                        </span>
+                      </div>
+                      <Progress value={progress} className="h-3" />
+                    </div>
+
+                    {/* 已打标字段数 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">
+                        已打标字段数
+                      </span>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {task.labeled_fields}
+                      </div>
+                    </div>
+
+                    {/* 总打标字段数 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">
+                        总打标字段数
+                      </span>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {task.total_fields}
+                      </div>
+                    </div>
+
+                    {/* 任务ID */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">任务ID</span>
+                      <div className="text-base font-medium text-gray-900">
+                        {task.task_id}
+                      </div>
+                    </div>
+
+                    {/* 状态 */}
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm text-gray-500">状态</span>
+                      <div>
+                        <span
+                          className={`rounded-xl py-1 px-2 text-[0.9rem] ${getStatusBadgeVariant(task.status)}`}
+                        >
+                          {task.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 最近运行时间 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">
+                        最近运行时间
+                      </span>
+                      <div className="text-base font-medium text-gray-900">
+                        {task.last_run}
+                      </div>
+                    </div>
+
+                    {/* 数据库 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">数据库</span>
+                      <div className="text-base font-medium text-gray-900">
+                        {task.database}
+                      </div>
+                    </div>
+
+                    {/* 数据表 */}
+                    <div className="space-y-1">
+                      <span className="text-sm text-gray-500">数据表</span>
+                      <div className="text-base font-medium text-gray-900">
+                        {task.table}
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </section>
     </div>
   );
