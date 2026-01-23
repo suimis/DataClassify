@@ -849,7 +849,7 @@ export default function Page() {
                     {/* 任务ID */}
                     <div className="space-y-1">
                       <span className="text-sm text-gray-500">任务ID</span>
-                      <div className="text-base font-medium text-gray-900">
+                      <div className="font-medium text-gray-900">
                         {task.task_id}
                       </div>
                     </div>
@@ -871,7 +871,7 @@ export default function Page() {
                       <span className="text-sm text-gray-500">
                         最近运行时间
                       </span>
-                      <div className="text-base font-medium text-gray-900">
+                      <div className="font-medium text-gray-900">
                         {task.last_run}
                       </div>
                     </div>
@@ -879,7 +879,7 @@ export default function Page() {
                     {/* 数据库 */}
                     <div className="space-y-1">
                       <span className="text-sm text-gray-500">数据库</span>
-                      <div className="text-base font-medium text-gray-900">
+                      <div className="font-medium text-gray-900">
                         {task.database}
                       </div>
                     </div>
@@ -887,7 +887,7 @@ export default function Page() {
                     {/* 数据表 */}
                     <div className="space-y-1">
                       <span className="text-sm text-gray-500">数据表</span>
-                      <div className="text-base font-medium text-gray-900">
+                      <div className="font-medium text-gray-900">
                         {task.table}
                       </div>
                     </div>
