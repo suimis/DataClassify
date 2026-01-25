@@ -241,3 +241,13 @@ export interface DisplayDataResults {
   type: 'table' | 'markdown';
   data: DisplayClassificationResult[] | string;
 }
+
+// 标签分类接口
+export interface TagClassification {
+  id: string;
+  level1: string; // 一级业务属性分类
+  level2: string; // 二级业务属性分类
+  level3: string; // 三级业务属性分类
+  level4: string; // 四级业务属性分类
+  sensitivityLevel: string; // 敏感性分类
+}
